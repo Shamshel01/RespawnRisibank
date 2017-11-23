@@ -22,6 +22,18 @@
         <item name="themedBackgroundAvatar">@drawable/avatar_image_border_light</item>
         <item name="themedNavigationHeaderBackground">@drawable/navigation_header_background_light</item>
         <item name="themedSelectedStickerTypeColor">@color/selectedStickerTypeColorThemeLight</item>
+        <item name="themedAltBackgroundColor">@color/defaultColorAltThemeLight</item>
+        <item name="themedDeletedMessageBackgroundColor">@color/defaultDeletedMessageColorThemeLight</item>
+        <item name="themedSurveyMessageBackgroundColor">@color/defaultSurveyMessageColorThemeLight</item>
+        <item name="themedTopicNameColor">@color/defaultTopicNameColorThemeLight</item>
+        <item name="themedQuoteBackgroundColor">@color/colorQuoteBackgroundThemeLight</item>
+        <item name="themedPseudoUserColor">@color/colorPseudoUserThemeLight</item>
+        <item name="themedPseudoOtherModeForumColor">@color/colorPseudoOtherModeForumThemeLight</item>
+        <item name="themedPseudoOtherModeIrcColor">@color/colorPseudoOtherModeIrcThemeLight</item>
+        <item name="themedPseudoModoColor">@color/colorPseudoModoThemeLight</item>
+        <item name="themedPseudoAdminColor">@color/colorPseudoAdminThemeLight</item>
+        <item name="themedHeaderTextColor">@color/headerTextColorThemeLight</item>
+        <item name="themedNavigationIconColor">@color/navigationIconColorThemeLight</item>
     </style>
     <style name="AppTheme.Light.Real" parent="AppTheme.Light.Base"/>
 
@@ -47,31 +59,30 @@
         <item name="themedBackgroundAvatar">@drawable/avatar_image_border_dark</item>
         <item name="themedNavigationHeaderBackground">@drawable/navigation_header_background_dark</item>
         <item name="themedSelectedStickerTypeColor">@color/selectedStickerTypeColorThemeDark</item>
+        <item name="themedAltBackgroundColor">@color/altBackgroundColorThemeDark</item>
+        <item name="themedDeletedMessageBackgroundColor">@color/deletedMessagesBackgroundColorThemeDark</item>
+        <item name="themedSurveyMessageBackgroundColor">@color/surveyMessagesBackgroundColorThemeDark</item>
+        <item name="themedTopicNameColor">@color/topicNameColorThemeDark</item>
+        <item name="themedQuoteBackgroundColor">@color/colorQuoteBackgroundThemeDark</item>
+        <item name="themedPseudoUserColor">@color/colorPseudoUserThemeDark</item>
+        <item name="themedPseudoOtherModeForumColor">@color/colorPseudoOtherModeForumThemeDark</item>
+        <item name="themedPseudoOtherModeIrcColor">@color/colorPseudoOtherModeIrcThemeDark</item>
+        <item name="themedPseudoModoColor">@color/colorPseudoModoThemeDark</item>
+        <item name="themedPseudoAdminColor">@color/colorPseudoAdminThemeDark</item>
+        <item name="themedHeaderTextColor">@color/headerTextColorThemeDark</item>
+        <item name="themedNavigationIconColor">@color/navigationIconColorThemeDark</item>
     </style>
     <style name="AppTheme.Dark.Real" parent="AppTheme.Dark.Base"/>
 
-    <style name="AppTheme.Black.Base" parent="PreferenceFixTheme.NoActionBar">
-        <item name="android:windowAnimationStyle">@style/AppActivityAnimation</item>
-        <item name="themedShadowBottom">@drawable/shadow_bottom_dark</item>
-        <item name="themedShadowTop">@drawable/shadow_top_dark</item>
+    <style name="AppTheme.Black.Base" parent="AppTheme.Dark.Base">
         <item name="colorPrimary">@color/colorPrimaryThemeBlack</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkerThemeBlack</item>
-        <item name="colorAccent">@color/colorAccentThemeDark</item>
         <item name="android:windowBackground">@color/windowBackgroundColorThemeBlack</item>
-        <item name="themedOverlayPopupTheme">@style/ThemeOverlay.AppCompat.Dark</item>
         <item name="themedDefaultBackgroundColor">@color/defaultBackgroundColorThemeBlack</item>
         <item name="themedDarkerBackgroundColor">@color/darkerBackgroundColorThemeBlack</item>
-        <item name="themedLinkColor">@color/linkColorThemeDark</item>
-        <item name="themedNavigationMore">@drawable/ic_more_dark</item>
-        <item name="themedForumIcon">@drawable/ic_forum_dark</item>
-        <item name="themedContentAdd">@drawable/ic_add_dark</item>
-        <item name="themedTextFormatGeneral">@drawable/textformat_general_dark</item>
-        <item name="themedContentSendIcon">@drawable/ic_msg_send_dark</item>
-        <item name="themedDividerColor">@color/dividerColorThemeDark</item>
-        <item name="themedClearIcon">@drawable/ic_clear_dark</item>
         <item name="themedBackgroundAvatar">@drawable/avatar_image_border_black</item>
-        <item name="themedNavigationHeaderBackground">@drawable/navigation_header_background_dark</item>
-        <item name="themedSelectedStickerTypeColor">@color/selectedStickerTypeColorThemeDark</item>
+        <item name="themedAltBackgroundColor">@color/altBackgroundColorThemeBlack</item>
+        <item name="themedQuoteBackgroundColor">@color/colorQuoteBackgroundThemeBlack</item>
     </style>
     <style name="AppTheme.Black.Real" parent="AppTheme.Black.Base"/>
 
@@ -101,6 +112,11 @@
         <item name="colorAccent">?attr/themedLinkColor</item>
     </style>
 
+    <style name="PrimaryColorIsRealRed">
+        <item name="colorPrimary">@color/colorPrimaryRealRed</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkerRealRed</item>
+    </style>
+
     <style name="PrimaryColorIsRed">
         <item name="colorPrimary">@color/colorPrimaryRed</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkerRed</item>
@@ -109,6 +125,11 @@
     <style name="PrimaryColorIsPink">
         <item name="colorPrimary">@color/colorPrimaryPink</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkerPink</item>
+    </style>
+
+    <style name="PrimaryColorIsSoftPurple">
+        <item name="colorPrimary">@color/colorPrimarySoftPurple</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkerSoftPurple</item>
     </style>
 
     <style name="PrimaryColorIsPurple">
@@ -136,6 +157,11 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDarkerLightBlue</item>
     </style>
 
+    <style name="PrimaryColorIsSoftBlue">
+        <item name="colorPrimary">@color/colorPrimarySoftBlue</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkerSoftBlue</item>
+    </style>
+
     <style name="PrimaryColorIsCyan">
         <item name="colorPrimary">@color/colorPrimaryCyan</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkerCyan</item>
@@ -144,6 +170,21 @@
     <style name="PrimaryColorIsTeal">
         <item name="colorPrimary">@color/colorPrimaryTeal</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkerTeal</item>
+    </style>
+
+    <style name="PrimaryColorIsPrestoGreen">
+        <item name="colorPrimary">@color/colorPrimaryPrestoGreen</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkerPrestoGreen</item>
+    </style>
+
+    <style name="PrimaryColorIsRealGreen">
+        <item name="colorPrimary">@color/colorPrimaryRealGreen</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkerRealGreen</item>
+    </style>
+
+    <style name="PrimaryColorIsRealLightGreen">
+        <item name="colorPrimary">@color/colorPrimaryRealLightGreen</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkerRealLightGreen</item>
     </style>
 
     <style name="PrimaryColorIsGreen">
@@ -181,6 +222,11 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDarkerDeepOrange</item>
     </style>
 
+    <style name="PrimaryColorIsSoftOrange">
+        <item name="colorPrimary">@color/colorPrimarySoftOrange</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkerSoftOrange</item>
+    </style>
+
     <style name="PrimaryColorIsBrown">
         <item name="colorPrimary">@color/colorPrimaryBrown</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkerBrown</item>
@@ -199,6 +245,11 @@
     <style name="PrimaryColorIsJVC">
         <item name="colorPrimary">@color/colorPrimaryJVC</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkerJVC</item>
+    </style>
+
+    <style name="PrimaryColorIsSoftBlack">
+        <item name="colorPrimary">@color/colorPrimarySoftBlack</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkerSoftBlack</item>
     </style>
 
     <style name="PrimaryColorIsBlack">

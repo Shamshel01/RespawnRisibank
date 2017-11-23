@@ -101,6 +101,10 @@ public class PrefsManager {
         addBoolPref(BoolPref.Names.SAVE_LAST_ROW_USED_INSERTSTUFF, currentContext.getString(R.string.settingsSaveLastRowUsedInsertstuff), true);
 
         addIntPref(IntPref.Names.PRIMARY_COLOR_OF_LIGHT_THEME, currentContext.getString(R.string.settingsPrimaryColorOfLightTheme), 0);
+        addIntPref(IntPref.Names.TOPIC_NAME_COLOR_OF_LIGHT_THEME, currentContext.getString(R.string.settingsTopicNameColorOfLightTheme), 0);
+        addIntPref(IntPref.Names.ALT_COLOR_OF_LIGHT_THEME, currentContext.getString(R.string.settingsAltColorOfLightTheme), 0);
+        addIntPref(IntPref.Names.SURVEY_COLOR_OF_LIGHT_THEME, currentContext.getString(R.string.settingsSurveyColorOfLightTheme), 0);
+        addIntPref(IntPref.Names.DELETED_COLOR_OF_LIGHT_THEME, currentContext.getString(R.string.settingsDeletedColorOfLightTheme), 0);
 
         addStringPref(StringPref.Names.MAX_NUMBER_OF_OVERLY_QUOTE, currentContext.getString(R.string.settingsMaxNumberOfOverlyQuote), "2", 0, 15);
         addStringPref(StringPref.Names.SHOW_AVATAR_MODE_FORUM, currentContext.getString(R.string.settingsShowAvatarModeForum), String.valueOf(ShowImageType.ALWAYS));
@@ -300,7 +304,8 @@ public class PrefsManager {
             CURRENT_TOPIC_MODE,
             FORUM_FAV_ARRAY_SIZE, TOPIC_FAV_ARRAY_SIZE,
             LAST_ROW_SELECTED_INSERTSTUFF,
-            PRIMARY_COLOR_OF_LIGHT_THEME
+            PRIMARY_COLOR_OF_LIGHT_THEME, TOPIC_NAME_COLOR_OF_LIGHT_THEME,
+            ALT_COLOR_OF_LIGHT_THEME, SURVEY_COLOR_OF_LIGHT_THEME, DELETED_COLOR_OF_LIGHT_THEME
         }
     }
 
