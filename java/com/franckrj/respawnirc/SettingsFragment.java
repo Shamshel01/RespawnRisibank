@@ -130,7 +130,14 @@ public class SettingsFragment extends PreferenceFragmentCompatDividers implement
             if (getActivity() != null) {
                 getActivity().recreate();
             }
-        } else if (key.equals(getString(R.string.settingsPrimaryColorOfLightTheme))) {
+        } else if (key.equals(getString(R.string.settingsInvertToolbarTextColor))) {
+            ThemeManager.updateToolbarTextColor();
+
+            if (getActivity() != null) {
+                getActivity().recreate();
+            }
+        } else if (key.equals(getString(R.string.settingsPrimaryColorOfLightTheme)) ||
+                   key.equals(getString(R.string.settingsTopicNameAndLinkColorOfLightTheme))) {
             if (getActivity() != null) {
                 ThemeManager.updateColorsUsed(getResources());
                 getActivity().recreate();
@@ -177,9 +184,12 @@ public class SettingsFragment extends PreferenceFragmentCompatDividers implement
     /* Le but de la clef temporaire est de ne pas sauvegarder l'option par défaut si c'est celle ci
      * qui est retourné par "PrefsManager.getX()". La clef temporaire n'est pas vide pour empêcher
      * des possibles crash (des histoires de requireKey() etc). Elle est unique par type de pref pour
-     * ne pas causer de crash lors de l'assignation d'un string à ce qui était précédement un bool. */
+     * ne pas causer de crash lors de l'assignation d'un string à ce qui était précédement un bool.
+     * La persistance est temporairement à false pour plus de sécurité, au cas où, dans le doute,
+     * mais ça reste plutôt assez moche comme solution au final. */
     private void updatePrefDefaultValue(Preference pref) {
         String realPrefKey = pref.getKey();
+        pref.setPersistent(false);
         if (pref instanceof CheckBoxPreference) {
             pref.setKey("tmpKeyBool");
             CheckBoxPreference checkBoxPref = (CheckBoxPreference) pref;
@@ -197,6 +207,7 @@ public class SettingsFragment extends PreferenceFragmentCompatDividers implement
             ListPreference listPref = (ListPreference) pref;
             listPref.setValue(PrefsManager.getString(realPrefKey));
         }
+        pref.setPersistent(true);
         pref.setKey(realPrefKey);
     }
 

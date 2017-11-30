@@ -16,15 +16,20 @@ public abstract class AbsThemedActivity extends AppCompatActivity {
     protected static ActivityManager.TaskDescription generalTaskDesc = null;
     protected static @ColorInt int colorUsedForGenerateTaskDesc = 0;
     protected ThemeManager.ThemeName lastThemeUsed = null;
-    protected int lastColorPrimaryUsed = -1;
+    protected boolean toolbarTextColorIsInverted = false;
+    protected int lastPrimaryColorUsed = -1;
+    protected int lastTopicNameAndLinkColorUsed = -1;
     protected @StyleRes int colorAccentStyle = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         ThemeManager.changeActivityTheme(this);
-        ThemeManager.changeActivityPrimaryColorIfNeeded(this);
+        ThemeManager.changeActivityToolbarTextColor(this);
+        ThemeManager.changeActivityThemedColorsIfNeeded(this);
         lastThemeUsed = ThemeManager.getThemeUsed();
-        lastColorPrimaryUsed = ThemeManager.getColorPrimaryIdUsedForThemeLight();
+        toolbarTextColorIsInverted = ThemeManager.getToolbarTextColorIsInvertedForThemeLight();
+        lastPrimaryColorUsed = ThemeManager.getPrimaryColorIdUsedForThemeLight();
+        lastTopicNameAndLinkColorUsed = ThemeManager.getTopicNameAndLinkColorIdUsedForThemeLight();
 
         if (colorAccentStyle != 0) {
             getTheme().applyStyle(colorAccentStyle, true);
@@ -46,7 +51,9 @@ public abstract class AbsThemedActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
 
-        if ((lastThemeUsed != ThemeManager.getThemeUsed()) || (lastColorPrimaryUsed != ThemeManager.getColorPrimaryIdUsedForThemeLight())) {
+        if ((lastThemeUsed != ThemeManager.getThemeUsed()) || (lastPrimaryColorUsed != ThemeManager.getPrimaryColorIdUsedForThemeLight()) ||
+                (lastTopicNameAndLinkColorUsed != ThemeManager.getTopicNameAndLinkColorIdUsedForThemeLight()) ||
+                (toolbarTextColorIsInverted != ThemeManager.getToolbarTextColorIsInvertedForThemeLight())) {
             recreate();
         }
     }

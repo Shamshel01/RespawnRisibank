@@ -10,7 +10,7 @@
             android:title="@string/theme"
             android:summary="%s"
             android:entries="@array/choicesForThemesReadable"
-            android:entryValues="@array/threeChoicesValue"/>
+            android:entryValues="@array/fourChoicesValue"/>
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -21,11 +21,15 @@
             app:pref_currentColor="@color/colorPrimaryIndigo"
             app:pref_colors="@array/choicesForPrimaryColor"/>
 
+        <CheckBoxPreference
+            android:key="@string/settingsInvertToolbarTextColor"
+            android:title="@string/invertToolbarTextColorTitle"/>
+
         <ColorPickerPreference
-            android:key="@string/settingsTopicNameColorOfLightTheme"
-            android:title="@string/topicNameColor"
-            app:pref_currentColor="@color/defaultTopicNameColorThemeLight"
-            app:pref_colors="@array/choicesForTopicNameColor"/>
+            android:key="@string/settingsTopicNameAndLinkColorOfLightTheme"
+            android:title="@string/topicNameAndLinkColor"
+            app:pref_currentColor="@color/defaultTopicNameAndLinkColorThemeLight"
+            app:pref_colors="@array/choicesForTopicNameAndLinkColor"/>
 
         <ColorPickerPreference
             android:key="@string/settingsAltColorOfLightTheme"
