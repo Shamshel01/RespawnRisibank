@@ -1,11 +1,11 @@
 package com.franckrj.respawnirc.jvctopic;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,7 +31,9 @@ public class ShowSurveyActivity extends AbsHomeIsBackActivity implements VoteInS
     private static final String SAVE_VOTE_BUTTON_IS_VISIBLE = "saveVoteButtonIsVisible";
     private static final String SAVE_MAIN_CARD_IS_VISIBLE = "saveMainCardIsVisible";
     private static final String SAVE_CONTENT_FOR_SURVEY = "saveContentForSurvey";
+    private static final String SAVE_SCROLL_POSITION = "saveScrollPosition";
 
+    private ScrollView mainScrollView = null;
     private View mainCardView = null;
     private TextView contentText = null;
     private Button voteButton = null;
@@ -133,7 +135,7 @@ public class ShowSurveyActivity extends AbsHomeIsBackActivity implements VoteInS
         }
     }
 
-    private String addStyleToPercentage(String percentageToStyle) {
+    private static String addStyleToPercentage(String percentageToStyle) {
         final int spaceToTake = ("100").length();
         String numberOfPercentage = percentageToStyle.substring(0, percentageToStyle.indexOf(" "));
         String colorValueOfPercentage;
@@ -190,13 +192,14 @@ public class ShowSurveyActivity extends AbsHomeIsBackActivity implements VoteInS
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_showsurvey);
         initToolbar(R.id.toolbar_showsurvey);
 
         ActionBar myActionBar = getSupportActionBar();
 
+        mainScrollView = findViewById(R.id.scrollview_showsurvey);
         mainCardView = findViewById(R.id.card_showsurvey);
         contentText = findViewById(R.id.content_showsurvey);
         voteButton = findViewById(R.id.button_vote_showsurvey);
@@ -208,17 +211,18 @@ public class ShowSurveyActivity extends AbsHomeIsBackActivity implements VoteInS
         swipeRefresh.setEnabled(false);
         swipeRefresh.setColorSchemeResources(R.color.colorAccentThemeLight);
 
-        if (Build.VERSION.SDK_INT < 21) {
-            int newScrollViewPadding = getResources().getDimensionPixelSize(R.dimen.marginOfCards) - getResources().getDimensionPixelSize(R.dimen.elevationOfCards);
-            View scrollView = findViewById(R.id.scrollview_showsurvey);
-            scrollView.setPadding(newScrollViewPadding, newScrollViewPadding, newScrollViewPadding, newScrollViewPadding);
-        }
-
         if (savedInstanceState != null) {
             mainCardView.setVisibility(savedInstanceState.getBoolean(SAVE_MAIN_CARD_IS_VISIBLE, false) ? View.VISIBLE : View.GONE);
             voteButton.setVisibility(savedInstanceState.getBoolean(SAVE_VOTE_BUTTON_IS_VISIBLE, false) ? View.VISIBLE : View.GONE);
             contentForSurvey = savedInstanceState.getString(SAVE_CONTENT_FOR_SURVEY, "");
             contentText.setText(Undeprecator.htmlFromHtml(contentForSurvey));
+
+            mainScrollView.post(new Runnable() {
+                @Override
+                public void run() {
+                    mainScrollView.scrollTo(0, savedInstanceState.getInt(SAVE_SCROLL_POSITION, 0));
+                }
+            });
         }
         if (getIntent() != null) {
             if (getIntent().getStringExtra(EXTRA_SURVEY_TITLE) != null && myActionBar != null) {
@@ -254,6 +258,7 @@ public class ShowSurveyActivity extends AbsHomeIsBackActivity implements VoteInS
         outState.putBoolean(SAVE_MAIN_CARD_IS_VISIBLE, mainCardView.getVisibility() == View.VISIBLE);
         outState.putBoolean(SAVE_VOTE_BUTTON_IS_VISIBLE, voteButton.getVisibility() == View.VISIBLE);
         outState.putString(SAVE_CONTENT_FOR_SURVEY, contentForSurvey);
+        outState.putInt(SAVE_SCROLL_POSITION, mainScrollView.getScrollY());
     }
 
     @Override

@@ -1,9 +1,11 @@
 package com.franckrj.respawnirc.jvcforum;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -91,7 +93,17 @@ public class SendTopicToForumActivity extends AbsHomeIsBackActivity implements I
                 Toast.makeText(SendTopicToForumActivity.this, JVCParser.getErrorMessage(reqResult), Toast.LENGTH_SHORT).show();
             }
 
+            clearWholeTopicIncludingSurvey();
             finish();
+        }
+    };
+
+    private final DialogInterface.OnClickListener onClickInClearWholeTopicConfirmationListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            if (which == DialogInterface.BUTTON_POSITIVE)  {
+                clearWholeTopicIncludingSurvey();
+            }
         }
     };
 
@@ -127,11 +139,28 @@ public class SendTopicToForumActivity extends AbsHomeIsBackActivity implements I
         }
     }
 
+    private void clearWholeTopicIncludingSurvey() {
+        topicTitleEdit.setText("");
+        topicContentEdit.setText("");
+        currentInfos.surveyTitle = "";
+        currentInfos.surveyReplysList.clear();
+        updateManageSurveyButtonText();
+    }
+
     private void stopAllCurrentTasks() {
         if (currentAsyncTaskForSendTopic != null) {
             currentAsyncTaskForSendTopic.clearListenersAndCancel();
             currentAsyncTaskForSendTopic = null;
         }
+    }
+
+    private void initializeSettings() {
+        currentInfos.cookieList = PrefsManager.getString(PrefsManager.StringPref.Names.COOKIES_LIST);
+        lastTopicTitleSended = PrefsManager.getString(PrefsManager.StringPref.Names.LAST_TOPIC_TITLE_SENDED);
+        lastTopicContentSended = PrefsManager.getString(PrefsManager.StringPref.Names.LAST_TOPIC_CONTENT_SENDED);
+        lastSurveyTitleSended = PrefsManager.getString(PrefsManager.StringPref.Names.LAST_SURVEY_TITLE_SENDED);
+        lastSurveyReplySendedInAString = PrefsManager.getString(PrefsManager.StringPref.Names.LAST_SURVEY_REPLY_SENDED_IN_A_STRING);
+        saveTopicsAsDraft = PrefsManager.getBool(PrefsManager.BoolPref.Names.AUTO_SAVE_MESSAGES_AND_TOPICS_AS_DRAFT);
     }
 
     private static String surveyReplyListToString(ArrayList<String> thisSurveyReplyList) {
@@ -184,6 +213,7 @@ public class SendTopicToForumActivity extends AbsHomeIsBackActivity implements I
             }
         }
 
+        initializeSettings();
         if (savedInstanceState != null) {
             ArrayList<String> tmpListOfReply = savedInstanceState.getStringArrayList(SAVE_SURVEY_REPLY_LIST);
             currentInfos.surveyTitle = savedInstanceState.getString(SAVE_SURVEY_TITLE, "");
@@ -192,13 +222,6 @@ public class SendTopicToForumActivity extends AbsHomeIsBackActivity implements I
                 currentInfos.surveyReplysList = tmpListOfReply;
             }
         } else {
-            currentInfos.cookieList = PrefsManager.getString(PrefsManager.StringPref.Names.COOKIES_LIST);
-            lastTopicTitleSended = PrefsManager.getString(PrefsManager.StringPref.Names.LAST_TOPIC_TITLE_SENDED);
-            lastTopicContentSended = PrefsManager.getString(PrefsManager.StringPref.Names.LAST_TOPIC_CONTENT_SENDED);
-            lastSurveyTitleSended = PrefsManager.getString(PrefsManager.StringPref.Names.LAST_SURVEY_TITLE_SENDED);
-            lastSurveyReplySendedInAString = PrefsManager.getString(PrefsManager.StringPref.Names.LAST_SURVEY_REPLY_SENDED_IN_A_STRING);
-            saveTopicsAsDraft = PrefsManager.getBool(PrefsManager.BoolPref.Names.AUTO_SAVE_MESSAGES_AND_TOPICS_AS_DRAFT);
-
             if (saveTopicsAsDraft) {
                 topicTitleEdit.setText(PrefsManager.getString(PrefsManager.StringPref.Names.TOPIC_TITLE_DRAFT));
                 topicContentEdit.setText(PrefsManager.getString(PrefsManager.StringPref.Names.TOPIC_CONTENT_DRAFT));
@@ -261,6 +284,12 @@ public class SendTopicToForumActivity extends AbsHomeIsBackActivity implements I
                 currentInfos.surveyTitle = lastSurveyTitleSended;
                 currentInfos.surveyReplysList = surveyReplyStringToList(lastSurveyReplySendedInAString);
                 updateManageSurveyButtonText();
+                return true;
+            case R.id.action_clear_whole_topic_and_survey_sendtopic:
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(R.string.deleteTopic).setMessage(R.string.deleteWholeTopicWarning)
+                        .setPositiveButton(R.string.yes, onClickInClearWholeTopicConfirmationListener).setNegativeButton(R.string.no, null);
+                builder.show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

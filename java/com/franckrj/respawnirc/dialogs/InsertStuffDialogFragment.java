@@ -62,7 +62,7 @@ public class InsertStuffDialogFragment extends DialogFragment {
 
     private void selectThisRow(int rowToUse) {
         listOfCategoryButtons.get(oldRowNumber).setBackgroundColor(Color.TRANSPARENT);
-        listOfCategoryButtons.get(rowToUse).setBackgroundColor(ThemeManager.getColorInt(R.attr.themedSelectedStickerTypeColor, getActivity()));
+        listOfCategoryButtons.get(rowToUse).setBackgroundColor(ThemeManager.getColorInt(R.attr.themedDarkerPopupBackgroundColor, getActivity()));
         initializeSpanForTextViewIfNeeded(jvcImageGetter, rowToUse);
         mainTextView.setText(replaceUrlSpans(listOfSpanForTextView[rowToUse]));
         scrollViewOfButtons.requestChildFocus(listOfCategoryButtons.get(rowToUse), listOfCategoryButtons.get(rowToUse));
@@ -71,7 +71,7 @@ public class InsertStuffDialogFragment extends DialogFragment {
         PrefsManager.applyChanges();
     }
 
-    private void initializeListOfSmileyName() {
+    private static void initializeListOfSmileyName() {
         if (listOfSmileyNamesForFileName == null) {
             listOfSmileyNamesForFileName = new SimpleArrayMap<>();
             listOfSmileyNamesForFileName.put("1", ":)");
@@ -433,7 +433,7 @@ public class InsertStuffDialogFragment extends DialogFragment {
         }
     }
 
-    private void appendAnotherStuff(String newStuffToAppend, StringBuilder toThisStringBuilder, boolean previewHasToBeBig) {
+    private static void appendAnotherStuff(String newStuffToAppend, StringBuilder toThisStringBuilder, boolean previewHasToBeBig) {
         toThisStringBuilder.append("<a href=\"").append(newStuffToAppend).append("\"><img src=\"");
         if (previewHasToBeBig) {
             toThisStringBuilder.append("big-");
@@ -444,7 +444,7 @@ public class InsertStuffDialogFragment extends DialogFragment {
         }
     }
 
-    private void sendWhichInsertIsNeeded(String thisUrl, StuffInserted toThisListener) {
+    private static void sendWhichInsertIsNeeded(String thisUrl, StuffInserted toThisListener) {
         if (thisUrl.startsWith("sticker_")) {
             String newSticker = "[[sticker:p/" + thisUrl.replace("sticker_", "").replace("_", "-") + "]]";
             toThisListener.getStringInserted(newSticker, 0);
@@ -506,9 +506,7 @@ public class InsertStuffDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        super.onCreateDialog(savedInstanceState);
-
-        Drawable deletedDrawable = Undeprecator.resourcesGetDrawable(getResources(), ThemeManager.getDrawableRes(ThemeManager.DrawableName.DELETED_IMAGE));
+        Drawable deletedDrawable = ThemeManager.getDrawable(R.attr.themedDeletedImage, getActivity());
         deletedDrawable.setBounds(0, 0, deletedDrawable.getIntrinsicWidth(), deletedDrawable.getIntrinsicHeight());
 
         jvcImageGetter = new CustomImageGetter(getActivity(), deletedDrawable, null);

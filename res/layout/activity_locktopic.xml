@@ -40,18 +40,15 @@
             android:text="@string/lock"
             android:layout_margin="4dp"/>
 
-        <include
-            android:id="@+id/toolbar_locktopic"
-            layout="@layout/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"/>
-
         <View
             android:layout_width="match_parent"
             android:layout_height="4dp"
             android:layout_below="@+id/toolbar_locktopic"
             android:background="?attr/themedShadowTop"/>
+
+        <include
+            android:id="@+id/toolbar_locktopic"
+            layout="@layout/toolbar"/>
 
     </RelativeLayout>
 

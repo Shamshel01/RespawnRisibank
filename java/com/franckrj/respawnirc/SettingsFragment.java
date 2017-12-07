@@ -187,7 +187,7 @@ public class SettingsFragment extends PreferenceFragmentCompatDividers implement
      * ne pas causer de crash lors de l'assignation d'un string à ce qui était précédement un bool.
      * La persistance est temporairement à false pour plus de sécurité, au cas où, dans le doute,
      * mais ça reste plutôt assez moche comme solution au final. */
-    private void updatePrefDefaultValue(Preference pref) {
+    private static void updatePrefDefaultValue(Preference pref) {
         String realPrefKey = pref.getKey();
         pref.setPersistent(false);
         if (pref instanceof CheckBoxPreference) {
@@ -239,7 +239,6 @@ public class SettingsFragment extends PreferenceFragmentCompatDividers implement
         @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-            super.onCreateDialog(savedInstanceState);
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle(R.string.help).setMessage(R.string.help_dialog_settings)
                     .setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {

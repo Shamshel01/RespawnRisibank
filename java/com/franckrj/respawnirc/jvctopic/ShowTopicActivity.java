@@ -1,11 +1,13 @@
 package com.franckrj.respawnirc.jvctopic;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,8 +22,8 @@ import com.franckrj.respawnirc.MainActivity;
 import com.franckrj.respawnirc.R;
 import com.franckrj.respawnirc.base.AbsHomeIsBackActivity;
 import com.franckrj.respawnirc.dialogs.ChoosePageNumberDialogFragment;
-import com.franckrj.respawnirc.dialogs.LinkContextMenuDialogFragment;
-import com.franckrj.respawnirc.dialogs.MessageContextMenuDialogFragment;
+import com.franckrj.respawnirc.dialogs.LinkMenuDialogFragment;
+import com.franckrj.respawnirc.dialogs.MessageMenuDialogFragment;
 import com.franckrj.respawnirc.dialogs.InsertStuffDialogFragment;
 import com.franckrj.respawnirc.dialogs.SelectTextDialogFragment;
 import com.franckrj.respawnirc.dialogs.ShowImageDialogFragment;
@@ -38,7 +40,6 @@ import com.franckrj.respawnirc.utils.AddOrRemoveThingToFavs;
 import com.franckrj.respawnirc.utils.JVCParser;
 import com.franckrj.respawnirc.utils.PrefsManager;
 import com.franckrj.respawnirc.utils.ThemeManager;
-import com.franckrj.respawnirc.utils.Undeprecator;
 import com.franckrj.respawnirc.utils.Utils;
 
 import java.util.ArrayList;
@@ -46,7 +47,7 @@ import java.util.ArrayList;
 public class ShowTopicActivity extends AbsHomeIsBackActivity implements AbsShowTopicFragment.NewModeNeededListener, AbsJVCTopicGetter.NewForumAndTopicNameAvailable,
                                                                         PopupMenu.OnMenuItemClickListener, JVCTopicModeForumGetter.NewNumbersOfPagesListener,
                                                                         ChoosePageNumberDialogFragment.NewPageNumberSelected, JVCTopicAdapter.URLClicked,
-                                                                        AbsJVCTopicGetter.NewReasonForTopicLock, InsertStuffDialogFragment.StuffInserted, MessageContextMenuDialogFragment.NewPseudoIgnored,
+                                                                        AbsJVCTopicGetter.NewReasonForTopicLock, InsertStuffDialogFragment.StuffInserted, MessageMenuDialogFragment.NewPseudoIgnored,
                                                                         PageNavigationUtil.PageNavigationFunctions, AddOrRemoveThingToFavs.ActionToFavsEnded, AbsJVCTopicGetter.TopicLinkChanged,
                                                                         AbsShowTopicFragment.NewSurveyNeedToBeShown, JVCTopicAdapter.PseudoClicked, AbsJVCTopicGetter.NewPseudoOfAuthorAvailable {
     public static final String EXTRA_TOPIC_LINK = "com.franckrj.respawnirc.EXTRA_TOPIC_LINK";
@@ -99,11 +100,12 @@ public class ShowTopicActivity extends AbsHomeIsBackActivity implements AbsShowT
                     if (newMessageToEdit.isEmpty()) {
                         newMessageToEdit = getString(R.string.errorCantGetEditInfos);
                     }
-                    messageSendButton.setImageResource(ThemeManager.getDrawableRes(ThemeManager.DrawableName.CONTENT_SEND));
+                    messageSendButton.setImageDrawable(ThemeManager.getDrawable(R.attr.themedContentSendIcon, ShowTopicActivity.this));
                     showErrorWhenSendingMessage(newMessageToEdit);
                 } else if (useMessageToEdit) {
                     messageSendEdit.setText(newMessageToEdit);
                     messageSendEdit.setSelection(newMessageToEdit.length());
+                    messageSendEdit.requestFocus();
                 }
             }
         }
@@ -114,7 +116,7 @@ public class ShowTopicActivity extends AbsHomeIsBackActivity implements AbsShowT
         public void lastMessageIsSended(String withThisError) {
             if (reasonOfLock == null) {
                 messageSendButton.setEnabled(true);
-                messageSendButton.setImageResource(ThemeManager.getDrawableRes(ThemeManager.DrawableName.CONTENT_SEND));
+                messageSendButton.setImageDrawable(ThemeManager.getDrawable(R.attr.themedContentSendIcon, ShowTopicActivity.this));
 
                 if (withThisError != null) {
                     showErrorWhenSendingMessage(withThisError);
@@ -197,6 +199,59 @@ public class ShowTopicActivity extends AbsHomeIsBackActivity implements AbsShowT
         public void onClick(View buttonView) {
             InsertStuffDialogFragment insertStuffDialogFragment = new InsertStuffDialogFragment();
             insertStuffDialogFragment.show(getSupportFragmentManager(), "InsertStuffDialogFragment");
+        }
+    };
+
+    private final View.OnLongClickListener showSendmessageActionListener = new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View buttonView) {
+            PopupMenu popup = new PopupMenu(ShowTopicActivity.this, buttonView);
+            MenuItem postAsModoItem;
+
+            popup.getMenuInflater().inflate(R.menu.menu_sendmessage_action, popup.getMenu());
+            popup.setOnMenuItemClickListener(onSendmessageActionClickedListener);
+            postAsModoItem = popup.getMenu().findItem(R.id.enable_postasmodo_sendmessage_action);
+
+            if (postAsModoItem != null) {
+                postAsModoItem.setChecked(PrefsManager.getBool(PrefsManager.BoolPref.Names.POST_AS_MODO_WHEN_POSSIBLE));
+            }
+
+            popup.show();
+
+            return true;
+        }
+    };
+
+    private final PopupMenu.OnMenuItemClickListener onSendmessageActionClickedListener = new PopupMenu.OnMenuItemClickListener() {
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.enable_postasmodo_sendmessage_action:
+                    /* La valeur de isChecked est inversée car le changement d'état ne se fait pas automatiquement
+                     * donc c'est la valeur avant d'avoir cliqué qui est retournée. */
+                    PrefsManager.putBool(PrefsManager.BoolPref.Names.POST_AS_MODO_WHEN_POSSIBLE, !item.isChecked());
+                    PrefsManager.applyChanges();
+                    return true;
+                case R.id.delete_message_sendmessage_action:
+                    AlertDialog.Builder builder = new AlertDialog.Builder(ShowTopicActivity.this);
+                    builder.setTitle(R.string.deleteMessage).setMessage(R.string.deleteCurrentWritedMessageWarning)
+                           .setPositiveButton(R.string.yes, onClickInDeleteCurrentWritedMessageConfirmationListener).setNegativeButton(R.string.no, null);
+                    builder.show();
+                    return true;
+                default:
+                    return false;
+            }
+        }
+    };
+
+    private final DialogInterface.OnClickListener onClickInDeleteCurrentWritedMessageConfirmationListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            if (which == DialogInterface.BUTTON_POSITIVE)  {
+                messageSendEdit.setText("");
+                Utils.hideSoftKeyboard(ShowTopicActivity.this);
+                messageSendLayout.requestFocus();
+            }
         }
     };
 
@@ -285,7 +340,7 @@ public class ShowTopicActivity extends AbsHomeIsBackActivity implements AbsShowT
 
         if (messageSendButton.isEnabled() && getCurrentFragment().getLatestAjaxInfos().list != null) {
             messageSendButton.setEnabled(false);
-            messageSendButton.setImageResource(ThemeManager.getDrawableRes(ThemeManager.DrawableName.CONTENT_EDIT));
+            messageSendButton.setImageDrawable(ThemeManager.getDrawable(R.attr.themedContentEditIcon, this));
             infoForEditAreGetted = senderForMessages.getInfosForEditMessage(messageID, getCurrentFragment().getLatestAjaxInfos().list, cookieListInAString, useMessageToEdit);
         }
 
@@ -309,8 +364,8 @@ public class ShowTopicActivity extends AbsHomeIsBackActivity implements AbsShowT
         initToolbar(R.id.toolbar_showtopic).setOnLongClickListener(showForumAndTopicTitleListener);
 
         ActionBar myActionBar = getSupportActionBar();
-        Drawable arrowDrawable = Undeprecator.resourcesGetDrawable(getResources(), ThemeManager.getDrawableRes(ThemeManager.DrawableName.ARROW_DROP_DOWN));
-        arrowDrawable.setBounds(0, 0, arrowDrawable.getIntrinsicWidth() / 2, arrowDrawable.getIntrinsicHeight() / 2);
+        Drawable arrowDrawable = ThemeManager.getDrawable(R.attr.themedArrowDropDown, this);
+        arrowDrawable.setBounds(0, 0, arrowDrawable.getIntrinsicWidth(), arrowDrawable.getIntrinsicHeight());
 
         messageSendLayout = findViewById(R.id.sendmessage_layout_showtopic);
         messageSendEdit = findViewById(R.id.sendmessage_text_showtopic);
@@ -333,6 +388,7 @@ public class ShowTopicActivity extends AbsHomeIsBackActivity implements AbsShowT
         messageSendButton.setOnClickListener(sendMessageToTopicListener);
         messageSendButton.setOnLongClickListener(refreshFromSendButton);
         insertStuffButton.setOnClickListener(selectStickerClickedListener);
+        insertStuffButton.setOnLongClickListener(showSendmessageActionListener);
 
         pageNavigation.setCurrentLink(PrefsManager.getString(PrefsManager.StringPref.Names.TOPIC_URL_TO_FETCH));
         pseudoOfAuthor = PrefsManager.getString(PrefsManager.StringPref.Names.PSEUDO_OF_AUTHOR_OF_TOPIC);
@@ -382,7 +438,7 @@ public class ShowTopicActivity extends AbsHomeIsBackActivity implements AbsShowT
             senderForMessages.loadFromBundle(savedInstanceState);
 
             if (senderForMessages.getIsInEdit()) {
-                messageSendButton.setImageResource(ThemeManager.getDrawableRes(ThemeManager.DrawableName.CONTENT_EDIT));
+                messageSendButton.setImageDrawable(ThemeManager.getDrawable(R.attr.themedContentEditIcon, this));
             }
 
             pageNavigation.updateNavigationButtons();
@@ -571,8 +627,10 @@ public class ShowTopicActivity extends AbsHomeIsBackActivity implements AbsShowT
                     if (senderForMessages.getIsInEdit()) {
                         senderForMessages.cancelEdit();
                         messageSendButton.setEnabled(true);
-                        messageSendButton.setImageResource(ThemeManager.getDrawableRes(ThemeManager.DrawableName.CONTENT_SEND));
+                        messageSendButton.setImageDrawable(ThemeManager.getDrawable(R.attr.themedContentSendIcon, this));
                         messageSendEdit.setText("");
+                        Utils.hideSoftKeyboard(ShowTopicActivity.this);
+                        messageSendLayout.requestFocus();
                     } else {
                         startEditThisMessage(Long.toString(getCurrentFragment().getCurrentItemSelected().id), true);
                     }
@@ -722,10 +780,10 @@ public class ShowTopicActivity extends AbsHomeIsBackActivity implements AbsShowT
             }
         } else {
             Bundle argForFrag = new Bundle();
-            LinkContextMenuDialogFragment linkMenuDialogFragment = new LinkContextMenuDialogFragment();
-            argForFrag.putString(LinkContextMenuDialogFragment.ARG_URL, link);
+            LinkMenuDialogFragment linkMenuDialogFragment = new LinkMenuDialogFragment();
+            argForFrag.putString(LinkMenuDialogFragment.ARG_URL, link);
             linkMenuDialogFragment.setArguments(argForFrag);
-            linkMenuDialogFragment.show(getSupportFragmentManager(), "LinkContextMenuDialogFragment");
+            linkMenuDialogFragment.show(getSupportFragmentManager(), "LinkMenuDialogFragment");
         }
     }
 
@@ -805,14 +863,14 @@ public class ShowTopicActivity extends AbsHomeIsBackActivity implements AbsShowT
     @Override
     public void getMessageOfPseudoClicked(JVCParser.MessageInfos messageClicked) {
         Bundle argForFrag = new Bundle();
-        MessageContextMenuDialogFragment messageMenuDialogFragment = new MessageContextMenuDialogFragment();
-        argForFrag.putString(MessageContextMenuDialogFragment.ARG_PSEUDO_MESSAGE, messageClicked.pseudo);
-        argForFrag.putString(MessageContextMenuDialogFragment.ARG_PSEUDO_USER, pseudoOfUser);
-        argForFrag.putString(MessageContextMenuDialogFragment.ARG_MESSAGE_ID, String.valueOf(messageClicked.id));
-        argForFrag.putInt(MessageContextMenuDialogFragment.ARG_LINK_TYPE_FOR_INTERNAL_BROWSER, linkTypeForInternalBrowser.type);
-        argForFrag.putString(MessageContextMenuDialogFragment.ARG_MESSAGE_CONTENT, messageClicked.messageNotParsed);
+        MessageMenuDialogFragment messageMenuDialogFragment = new MessageMenuDialogFragment();
+        argForFrag.putString(MessageMenuDialogFragment.ARG_PSEUDO_MESSAGE, messageClicked.pseudo);
+        argForFrag.putString(MessageMenuDialogFragment.ARG_PSEUDO_USER, pseudoOfUser);
+        argForFrag.putString(MessageMenuDialogFragment.ARG_MESSAGE_ID, String.valueOf(messageClicked.id));
+        argForFrag.putInt(MessageMenuDialogFragment.ARG_LINK_TYPE_FOR_INTERNAL_BROWSER, linkTypeForInternalBrowser.type);
+        argForFrag.putString(MessageMenuDialogFragment.ARG_MESSAGE_CONTENT, messageClicked.messageNotParsed);
         messageMenuDialogFragment.setArguments(argForFrag);
-        messageMenuDialogFragment.show(getSupportFragmentManager(), "MessageContextMenuDialogFragment");
+        messageMenuDialogFragment.show(getSupportFragmentManager(), "MessageMenuDialogFragment");
     }
 
     @Override
