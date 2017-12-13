@@ -10,6 +10,8 @@ import com.franckrj.respawnirc.R;
 import com.franckrj.respawnirc.jvctopic.jvctopicviewers.AbsShowTopicFragment;
 
 public class PrefsManager {
+    public static final int CURRENT_SHORTCUT_VERSION_NUMBER = 1;
+
     private static SharedPreferences currentPrefs = null;
     private static SharedPreferences.Editor currentPrefsEdit = null;
     private static SimpleArrayMap<BoolPref.Names, BoolPref> listOfBoolPrefs = new SimpleArrayMap<>();
@@ -44,6 +46,8 @@ public class PrefsManager {
 
         addBoolPref(BoolPref.Names.IS_FIRST_LAUNCH, "pref.isFirstLaunch", true);
         addBoolPref(BoolPref.Names.USER_IS_MODO, "pref.userIsModo", false);
+        addBoolPref(BoolPref.Names.USE_LAST_MESSAGE_DRAFT_SAVED, "pref.useLastMessageDraftSaved", true);
+        addBoolPref(BoolPref.Names.USE_LAST_TOPIC_DRAFT_SAVED, "pref.useLastTopicDraftSaved", true);
 
         addIntPref(IntPref.Names.LAST_ACTIVITY_VIEWED, "pref.lastActivityViewed", MainActivity.ACTIVITY_SELECT_FORUM_IN_LIST);
         addIntPref(IntPref.Names.CURRENT_TOPIC_MODE, "pref.currentTopicMode", AbsShowTopicFragment.MODE_FORUM);
@@ -51,6 +55,7 @@ public class PrefsManager {
         addIntPref(IntPref.Names.TOPIC_FAV_ARRAY_SIZE, "pref.topicFavArraySize", 0);
         addIntPref(IntPref.Names.LAST_ROW_SELECTED_INSERTSTUFF, "pref.lastRowSelecetdInsertstuff", 1);
         addIntPref(IntPref.Names.NUMBER_OF_WEBVIEW_OPEN_SINCE_CACHE_CLEARED, "pref.numberOfWebviewOpenSinceCacheCleared", 0);
+        addIntPref(IntPref.Names.SHORTCUT_VERSION_NUMBER, "pref.shortcutVersionNumber", 0);
 
         addStringPref(StringPref.Names.PSEUDO_OF_USER, "pref.pseudoUser", "");
         addStringPref(StringPref.Names.COOKIES_LIST, "pref.cookiesList", "");
@@ -104,7 +109,6 @@ public class PrefsManager {
         addBoolPref(BoolPref.Names.COLOR_PSEUDO_OF_USER_IN_MESSAGE, currentContext.getString(R.string.settingsColorPseudoOfUserInMessage), true);
         addBoolPref(BoolPref.Names.BACK_IS_OPEN_DRAWER, currentContext.getString(R.string.settingsBackIsOpenDrawer), false);
         addBoolPref(BoolPref.Names.SAVE_LAST_ROW_USED_INSERTSTUFF, currentContext.getString(R.string.settingsSaveLastRowUsedInsertstuff), true);
-        addBoolPref(BoolPref.Names.AUTO_SAVE_MESSAGES_AND_TOPICS_AS_DRAFT, currentContext.getString(R.string.settingsAutoSaveMessagesAndTopicsAsDraft), true);
         addBoolPref(BoolPref.Names.INVERT_TOOLBAR_TEXT_COLOR, currentContext.getString(R.string.settingsInvertToolbarTextColor), false);
 
         addIntPref(IntPref.Names.PRIMARY_COLOR_OF_LIGHT_THEME, currentContext.getString(R.string.settingsPrimaryColorOfLightTheme), 0);
@@ -124,6 +128,7 @@ public class PrefsManager {
         addStringPref(StringPref.Names.STICKER_SIZE, currentContext.getString(R.string.settingsStickerSize), "50", 35, 70);
         addStringPref(StringPref.Names.MINI_NOELSHACK_WIDTH, currentContext.getString(R.string.settingsMiniNoelshackWidth), "68", 68, 136);
         addStringPref(StringPref.Names.LINK_TYPE_FOR_INTERNAL_BROWSER, currentContext.getString(R.string.settingsLinkTypeForInternalBrowser), String.valueOf(LinkType.NO_LINKS));
+        addStringPref(StringPref.Names.SAVE_MESSAGES_AND_TOPICS_AS_DRAFT_TYPE, currentContext.getString(R.string.settingsSaveMessagesAndTopicsAsDraftType), String.valueOf(SaveDraftType.ALWAYS));
     }
 
     public static boolean getBool(BoolPref.Names prefName) {
@@ -293,8 +298,8 @@ public class PrefsManager {
             COLOR_PSEUDO_OF_USER_IN_INFO, COLOR_PSEUDO_OF_USER_IN_MESSAGE,
             BACK_IS_OPEN_DRAWER,
             SAVE_LAST_ROW_USED_INSERTSTUFF,
-            AUTO_SAVE_MESSAGES_AND_TOPICS_AS_DRAFT,
-            INVERT_TOOLBAR_TEXT_COLOR
+            INVERT_TOOLBAR_TEXT_COLOR,
+            USE_LAST_MESSAGE_DRAFT_SAVED, USE_LAST_TOPIC_DRAFT_SAVED
         }
     }
 
@@ -314,7 +319,8 @@ public class PrefsManager {
             LAST_ROW_SELECTED_INSERTSTUFF,
             PRIMARY_COLOR_OF_LIGHT_THEME, TOPIC_NAME_AND_LINK_COLOR_OF_LIGHT_THEME,
             ALT_COLOR_OF_LIGHT_THEME, SURVEY_COLOR_OF_LIGHT_THEME, DELETED_COLOR_OF_LIGHT_THEME,
-            NUMBER_OF_WEBVIEW_OPEN_SINCE_CACHE_CLEARED
+            NUMBER_OF_WEBVIEW_OPEN_SINCE_CACHE_CLEARED,
+            SHORTCUT_VERSION_NUMBER
         }
     }
 
@@ -357,6 +363,7 @@ public class PrefsManager {
             IGNORED_PSEUDOS_IN_LC_LIST,
             AVATAR_SIZE, STICKER_SIZE, MINI_NOELSHACK_WIDTH,
             LINK_TYPE_FOR_INTERNAL_BROWSER,
+            SAVE_MESSAGES_AND_TOPICS_AS_DRAFT_TYPE,
             MESSAGE_DRAFT, TOPIC_TITLE_DRAFT, TOPIC_CONTENT_DRAFT, SURVEY_TITLE_DRAFT, SURVEY_REPLY_IN_A_STRING_DRAFT
         }
     }
@@ -391,6 +398,16 @@ public class PrefsManager {
         public static final int NEVER = 2;
 
         public ShowImageType(int newDefaultType) {
+            super(newDefaultType);
+        }
+    }
+
+    public static class SaveDraftType extends IntValueType {
+        public static final int ALWAYS = 0;
+        public static final int ASK_BEFORE = 1;
+        public static final int NEVER = 2;
+
+        public SaveDraftType(int newDefaultType) {
             super(newDefaultType);
         }
     }
