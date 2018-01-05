@@ -2,13 +2,13 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion "27.0.2"
+    buildToolsVersion "27.0.3"
     defaultConfig {
         applicationId "com.franckrj.respawnirc"
         minSdkVersion 15
         targetSdkVersion 27
-        versionCode 44
-        versionName "1.9"
+        versionCode 1_010_1_001
+        versionName "1.10b1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         resConfigs "fr"
     }

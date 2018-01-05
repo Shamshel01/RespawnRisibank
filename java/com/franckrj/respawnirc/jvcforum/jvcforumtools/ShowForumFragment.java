@@ -148,8 +148,14 @@ public class ShowForumFragment extends AbsShowSomethingFragment {
         }
     };
 
-    private void reloadSettings() {
+    private void reloadAdapterSettings() {
         adapterForForum.setAlternateBackgroundColor(PrefsManager.getBool(PrefsManager.BoolPref.Names.FORUM_ALTERNATE_BACKGROUND));
+        adapterForForum.setTopicTitleSizeInSp(Integer.parseInt(PrefsManager.getString(PrefsManager.StringPref.Names.TOPIC_TITLE_FONT_SIZE)));
+        adapterForForum.setTopicInfosSizeInSp(Integer.parseInt(PrefsManager.getString(PrefsManager.StringPref.Names.TOPIC_INFOS_FONT_SIZE)));
+    }
+
+    private void reloadSettings() {
+        reloadAdapterSettings();
         getterForForum.setCookieListInAString(PrefsManager.getString(PrefsManager.StringPref.Names.COOKIES_LIST));
         pseudoOfUserInLC = PrefsManager.getString(PrefsManager.StringPref.Names.PSEUDO_OF_USER).toLowerCase();
         ignoreTopicToo = PrefsManager.getBool(PrefsManager.BoolPref.Names.IGNORE_TOPIC_TOO);
@@ -165,6 +171,19 @@ public class ShowForumFragment extends AbsShowSomethingFragment {
             adapterForForum.notifyDataSetChanged();
         }
         return getterForForum.reloadForum();
+    }
+
+    private void recreateAdapterForForum() {
+        ArrayList<JVCParser.TopicInfos> allCurrentTopicsShowed = adapterForForum.getAllItems();
+
+        adapterForForum = new JVCForumAdapter(getActivity());
+        reloadAdapterSettings();
+        jvcTopicList.setAdapter(adapterForForum);
+
+        for (JVCParser.TopicInfos thisTopicInfo : allCurrentTopicsShowed) {
+            adapterForForum.addItem(thisTopicInfo);
+        }
+        adapterForForum.notifyDataSetChanged();
     }
 
     public void refreshForum() {
@@ -210,8 +229,12 @@ public class ShowForumFragment extends AbsShowSomethingFragment {
         return getterForForum.getIsInFavs();
     }
 
-    public String getLatestListOfInputInAString(boolean tryToPostAsModo) {
-        return getterForForum.getLatestListOfInputInAString(tryToPostAsModo);
+    public String getLatestListOfInputInAString() {
+        return getterForForum.getLatestListOfInputInAString();
+    }
+
+    public boolean getUserCanPostAsModo() {
+        return getterForForum.getUserCanPostAsModo();
     }
 
     public void setIsInFavs(Boolean newVal) {
@@ -272,7 +295,6 @@ public class ShowForumFragment extends AbsShowSomethingFragment {
                     adapterForForum.addItem(thisTopicInfo);
                 }
             }
-
             adapterForForum.notifyDataSetChanged();
 
             if (adapterForForum.getAllItems().isEmpty()) {
@@ -302,18 +324,27 @@ public class ShowForumFragment extends AbsShowSomethingFragment {
     public void onResume() {
         super.onResume();
         boolean oldAlternateBackgroundColor = adapterForForum.getAlternateBackgroundColor();
+        int oldTopicTitleSizeInSp = adapterForForum.getTopicTitleSizeInSp();
+        int oldTopicInfosSizeInSp = adapterForForum.getTopicInfosSizeInSp();
         @ColorInt int oldTopicNameColor = currentTopicNameColor;
         @ColorInt int oldAltColor = currentAltColor;
         reloadSettings();
         isInErrorMode = false;
 
-        if (oldTopicNameColor != currentTopicNameColor) {
-            adapterForForum.recreateAllItems();
-        }
+        /* Lors d'un changement de taille de police les vues ne sont pas bien resize. La seule solution qui semble fonctionner
+         * c'est de tout recréer, invalider les vues ou faire un requestLayout ne marche pas (au moins sous 4.0.4). */
+        if (oldTopicTitleSizeInSp != adapterForForum.getTopicTitleSizeInSp() ||
+                oldTopicInfosSizeInSp != adapterForForum.getTopicInfosSizeInSp()) {
+            recreateAdapterForForum();
+        } else {
+            if (oldTopicNameColor != currentTopicNameColor) {
+                adapterForForum.recreateAllItems();
+            }
 
-        if (oldAlternateBackgroundColor != adapterForForum.getAlternateBackgroundColor() ||
-                oldTopicNameColor != currentTopicNameColor || oldAltColor != currentAltColor) {
-            adapterForForum.notifyDataSetChanged();
+            if (oldAlternateBackgroundColor != adapterForForum.getAlternateBackgroundColor() ||
+                    oldTopicNameColor != currentTopicNameColor || oldAltColor != currentAltColor) {
+                adapterForForum.notifyDataSetChanged();
+            }
         }
 
         if (adapterForForum.getAllItems().isEmpty() && !allTopicsShowedAreFromIgnoredPseudos &&
