@@ -58,4 +58,7 @@
     <string name="settingsInvertToolbarTextColor" translatable="false">settings.invertToolbarTextColor</string>
     <string name="settingsTopicTitleFontSize" translatable="false">settings.topicTitleFontSize</string>
     <string name="settingsTopicInfosFontSize" translatable="false">settings.topicInfosFontSize</string>
+    <string name="settingsMessageFontSize" translatable="false">settings.messageFontSize</string>
+    <string name="settingsMessageInfosFontSize" translatable="false">settings.messageInfosFontSize</string>
+    <string name="settingsMessageSignatureFontSize" translatable="false">settings.messageSignatureFontSize</string>
 </resources>
