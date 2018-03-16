@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.text.emoji.EmojiCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -52,6 +53,7 @@ public class ShowTopicActivity extends AbsHomeIsBackActivity implements AbsShowT
                                                                         ChoosePageNumberDialogFragment.NewPageNumberSelected, JVCTopicAdapter.URLClicked, AbsShowTopicFragment.NewSurveyNeedToBeShown,
                                                                         InsertStuffDialogFragment.StuffInserted, MessageMenuDialogFragment.NewPseudoIgnored, PageNavigationUtil.PageNavigationFunctions,
                                                                         AddOrRemoveThingToFavs.ActionToFavsEnded, AddOrRemoveTopicToSubs.ActionToSubsEnded, AbsJVCTopicGetter.TopicLinkChanged {
+    public static final String EXTRA_OPENED_FROM_FORUM = "com.franckrj.respawnirc.EXTRA_OPENED_FROM_FORUM";
     public static final String EXTRA_TOPIC_LINK = "com.franckrj.respawnirc.EXTRA_TOPIC_LINK";
     public static final String EXTRA_TOPIC_NAME = "com.franckrj.respawnirc.EXTRA_TOPIC_NAME";
     public static final String EXTRA_FORUM_NAME = "com.franckrj.respawnirc.EXTRA_FORUM_NAME";
@@ -59,8 +61,10 @@ public class ShowTopicActivity extends AbsHomeIsBackActivity implements AbsShowT
     public static final String EXTRA_GO_TO_LAST_PAGE = "com.franckrj.respawnirc.EXTRA_GO_TO_LAST_PAGE";
 
     private static final int LOCK_TOPIC_REQUEST_CODE = 1245;
+    private static final String SAVE_TOPIC_OPENED_FROM_FORUM = "saveTopicOpenedFromForum";
     private static final String SAVE_LAST_PAGE = "saveLastPage";
     private static final String SAVE_TOPIC_STATUS = "saveTopicStatus";
+    private static final String SAVE_CURRENT_TOPIC_LINK = "saveCurrentTopicLink";
     private static final String SAVE_GO_TO_LAST_PAGE_AFTER_LOADING = "saveGoToLastPageAfterLoading";
 
     private AbsJVCTopicGetter.TopicStatusInfos topicStatus = new AbsJVCTopicGetter.TopicStatusInfos();
@@ -82,6 +86,7 @@ public class ShowTopicActivity extends AbsHomeIsBackActivity implements AbsShowT
     private boolean goToLastPageAfterLoading = false;
     private boolean goToBottomOnLoadIsEnabled = true;
     private DraftUtils utilsForDraft = new DraftUtils(PrefsManager.SaveDraftType.ALWAYS, PrefsManager.BoolPref.Names.USE_LAST_MESSAGE_DRAFT_SAVED);
+    private boolean topicHasBeenOpenedFromAForum = true;
 
     private final JVCMessageToTopicSender.NewMessageWantEditListener listenerForNewMessageWantEdit = new JVCMessageToTopicSender.NewMessageWantEditListener() {
         @Override
@@ -463,13 +468,12 @@ public class ShowTopicActivity extends AbsHomeIsBackActivity implements AbsShowT
         insertStuffButton.setOnClickListener(selectStickerClickedListener);
         insertStuffButton.setOnLongClickListener(showSendmessageActionListener);
 
-        pageNavigation.setCurrentLink(PrefsManager.getString(PrefsManager.StringPref.Names.TOPIC_URL_TO_FETCH));
-        topicStatus.pseudoOfAuthor = PrefsManager.getString(PrefsManager.StringPref.Names.PSEUDO_OF_AUTHOR_OF_TOPIC);
         updateShowNavigationButtons();
         initializeSettings();
         if (savedInstanceState == null) {
             if (getIntent() != null) {
                 goToLastPageAfterLoading = getIntent().getBooleanExtra(EXTRA_GO_TO_LAST_PAGE, false);
+                topicHasBeenOpenedFromAForum = getIntent().getBooleanExtra(EXTRA_OPENED_FROM_FORUM, true);
                 topicStatus.names.forum = getIntent().getStringExtra(EXTRA_FORUM_NAME);
                 topicStatus.names.topic = getIntent().getStringExtra(EXTRA_TOPIC_NAME);
 
@@ -496,13 +500,24 @@ public class ShowTopicActivity extends AbsHomeIsBackActivity implements AbsShowT
                 topicStatus.names.topic = "";
             }
 
+            /* Si les informations du topic n'étaient pas présentes dans l'Intent ça veut dire qu'il faut les récupérer dans les prefs
+             * parce que c'est le ShowTopic lancé au démarrage de l'application. */
+            if (pageNavigation.getCurrentLinkIsEmpty()) {
+                pageNavigation.setCurrentLink(PrefsManager.getString(PrefsManager.StringPref.Names.TOPIC_URL_TO_FETCH));
+                if (topicStatus.pseudoOfAuthor.isEmpty()) {
+                    topicStatus.pseudoOfAuthor = PrefsManager.getString(PrefsManager.StringPref.Names.PSEUDO_OF_AUTHOR_OF_TOPIC);
+                }
+            }
+
             updateLastPageAndCurrentItemAndButtonsToCurrentLink();
 
             if (utilsForDraft.lastDraftSavedHasToBeUsed()) {
                 messageSendEdit.setText(PrefsManager.getString(PrefsManager.StringPref.Names.MESSAGE_DRAFT));
             }
         } else {
+            topicHasBeenOpenedFromAForum = savedInstanceState.getBoolean(SAVE_TOPIC_OPENED_FROM_FORUM, true);
             topicStatus = savedInstanceState.getParcelable(SAVE_TOPIC_STATUS);
+            pageNavigation.setCurrentLink(savedInstanceState.getString(SAVE_CURRENT_TOPIC_LINK, ""));
             pageNavigation.setLastPageNumber(savedInstanceState.getInt(SAVE_LAST_PAGE, pageNavigation.getCurrentItemIndex() + 1));
             goToLastPageAfterLoading = savedInstanceState.getBoolean(SAVE_GO_TO_LAST_PAGE_AFTER_LOADING, false);
             pageNavigation.notifyDataSetChanged();
@@ -521,7 +536,7 @@ public class ShowTopicActivity extends AbsHomeIsBackActivity implements AbsShowT
 
         if (myActionBar != null) {
             myActionBar.setTitle(topicStatus.names.forum);
-            myActionBar.setSubtitle(topicStatus.names.topic);
+            myActionBar.setSubtitle(EmojiCompat.get().process(topicStatus.names.topic));
         }
     }
 
@@ -555,7 +570,9 @@ public class ShowTopicActivity extends AbsHomeIsBackActivity implements AbsShowT
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putBoolean(SAVE_TOPIC_OPENED_FROM_FORUM, topicHasBeenOpenedFromAForum);
         outState.putParcelable(SAVE_TOPIC_STATUS, topicStatus);
+        outState.putString(SAVE_CURRENT_TOPIC_LINK, pageNavigation.getCurrentPageLink());
         outState.putInt(SAVE_LAST_PAGE, pageNavigation.getLastPage());
         outState.putBoolean(SAVE_GO_TO_LAST_PAGE_AFTER_LOADING, goToLastPageAfterLoading);
         senderForMessages.saveToBundle(outState);
@@ -576,6 +593,7 @@ public class ShowTopicActivity extends AbsHomeIsBackActivity implements AbsShowT
         MenuItem favItem = menu.findItem(R.id.action_change_topic_fav_value_showtopic);
         MenuItem subItem = menu.findItem(R.id.action_change_topic_sub_value_showtopic);
 
+        menu.findItem(R.id.action_go_to_forum_of_topic_showtopic).setVisible(!topicHasBeenOpenedFromAForum);
         favItem.setEnabled(false);
         subItem.setEnabled(false);
         if (!pseudoOfUser.isEmpty()) {
@@ -614,6 +632,13 @@ public class ShowTopicActivity extends AbsHomeIsBackActivity implements AbsShowT
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.action_go_to_forum_of_topic_showtopic:
+                Intent newShowForumIntent = new Intent(this, ShowForumActivity.class);
+                newShowForumIntent.putExtra(ShowForumActivity.EXTRA_NEW_LINK, JVCParser.getForumForTopicLink(pageNavigation.getCurrentPageLink()));
+                newShowForumIntent.putExtra(ShowForumActivity.EXTRA_FORUM_NAME, topicStatus.names.forum);
+                newShowForumIntent.putExtra(ShowForumActivity.EXTRA_IS_FIRST_ACTIVITY, false);
+                startActivity(newShowForumIntent);
+                return true;
             case R.id.action_change_topic_fav_value_showtopic:
                 if (topicStatus.isInFavs != null) {
                     if (currentTaskForFavs == null) {
@@ -848,14 +873,16 @@ public class ShowTopicActivity extends AbsHomeIsBackActivity implements AbsShowT
         if (!itsLongClick) {
             String possibleNewLink = JVCParser.formatThisUrl(link);
 
-            if (JVCParser.checkIfTopicAreSame(pageNavigation.getFirstPageLink(), possibleNewLink)) {
-                pageNavigation.setCurrentItemIndex(getShowablePageNumberForThisLink(possibleNewLink) - 1);
-            } else if (JVCParser.checkIfItsJVCLink(possibleNewLink)) {
+            if (JVCParser.checkIfItsTopicLink(possibleNewLink)) {
+                Intent newShowTopicIntent = new Intent(this, ShowTopicActivity.class);
+                newShowTopicIntent.putExtra(ShowTopicActivity.EXTRA_TOPIC_LINK, possibleNewLink);
+                newShowTopicIntent.putExtra(ShowTopicActivity.EXTRA_OPENED_FROM_FORUM, false);
+                startActivity(newShowTopicIntent);
+            } else if (JVCParser.checkIfItsForumLink(possibleNewLink)) {
                 Intent newShowForumIntent = new Intent(this, ShowForumActivity.class);
-                newShowForumIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 newShowForumIntent.putExtra(ShowForumActivity.EXTRA_NEW_LINK, possibleNewLink);
+                newShowForumIntent.putExtra(ShowForumActivity.EXTRA_IS_FIRST_ACTIVITY, false);
                 startActivity(newShowForumIntent);
-                finish();
             } else if (showOverviewOnImageClick && JVCParser.checkIfItsNoelshackLink(link)) {
                 Bundle argForFrag = new Bundle();
                 ShowImageDialogFragment showImageDialogFragment = new ShowImageDialogFragment();
@@ -993,7 +1020,7 @@ public class ShowTopicActivity extends AbsHomeIsBackActivity implements AbsShowT
 
             if (myActionBar != null) {
                 myActionBar.setTitle(topicStatus.names.forum);
-                myActionBar.setSubtitle(topicStatus.names.topic);
+                myActionBar.setSubtitle(EmojiCompat.get().process(topicStatus.names.topic));
             }
         }
     }

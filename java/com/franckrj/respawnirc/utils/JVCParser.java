@@ -215,9 +215,8 @@ public final class JVCParser {
         return linkToCheck.startsWith("http://www.jeuxvideo.com/forums/0-");
     }
 
-    public static boolean checkIfItsJVCLink(String linkToCheck) {
-        return linkToCheck.startsWith("http://www.jeuxvideo.com/forums/0-") ||
-                linkToCheck.startsWith("http://www.jeuxvideo.com/forums/1-") ||
+    public static boolean checkIfItsTopicLink(String linkToCheck) {
+        return linkToCheck.startsWith("http://www.jeuxvideo.com/forums/1-") ||
                 linkToCheck.startsWith("http://www.jeuxvideo.com/forums/42-");
     }
 
@@ -1572,8 +1571,12 @@ public final class JVCParser {
             out.writeInt(lastIdOfSpoilInMessage);
 
             out.writeInt(listOfSpoilIdToShow.size());
-            for (int i = 0; i < listOfSpoilIdToShow.size(); ++i) {
-                out.writeInt(listOfSpoilIdToShow.valueAt(i));
+            for (Integer currentSpoilId : listOfSpoilIdToShow) {
+                if (currentSpoilId != null) {
+                    out.writeInt(currentSpoilId);
+                } else {
+                    out.writeInt(-8); //valeur impossible à avoir en temps normal, le minimum est censé être -1.
+                }
             }
         }
 
@@ -1659,11 +1662,6 @@ public final class JVCParser {
 
         public NameAndLink() {
             //rien
-        }
-
-        public NameAndLink(String newName, String newLink) {
-            name = newName;
-            link = newLink;
         }
 
         private NameAndLink(Parcel in) {
