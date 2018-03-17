@@ -136,8 +136,8 @@ public class Utils {
 
     public static void openLinkInExternalBrowser(String link, Activity parentActivity) {
         try {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
-            parentActivity.startActivity(browserIntent);
+            Intent chooseBrowserIntent = Intent.createChooser(new Intent(Intent.ACTION_VIEW, Uri.parse(link)), parentActivity.getString(R.string.chooseBrowser));
+            parentActivity.startActivity(chooseBrowserIntent);
         } catch (Exception e) {
             //rien
         }
@@ -196,7 +196,7 @@ public class Utils {
                     .setShortLabel(currentShortcutName)
                     .setLongLabel(currentShortcutName)
                     .setIcon(Icon.createWithResource(parentActivity, R.mipmap.ic_shortcut_forum))
-                    .setIntent(new Intent(MainActivity.ACTION_OPEN_LINK, Uri.parse(currentShortcutLink))).build();
+                    .setIntent(new Intent(MainActivity.ACTION_OPEN_SHORTCUT, Uri.parse(currentShortcutLink), parentActivity, MainActivity.class)).build();
 
             listOfShortcuts.add(newShortcut);
         }
