@@ -110,9 +110,10 @@ public class PrefsManager {
         addBoolPref(BoolPref.Names.BACK_IS_OPEN_DRAWER, currentContext.getString(R.string.settingsBackIsOpenDrawer), false);
         addBoolPref(BoolPref.Names.SAVE_LAST_ROW_USED_INSERTSTUFF, currentContext.getString(R.string.settingsSaveLastRowUsedInsertstuff), true);
         addBoolPref(BoolPref.Names.INVERT_TOOLBAR_TEXT_COLOR, currentContext.getString(R.string.settingsInvertToolbarTextColor), false);
+        addBoolPref(BoolPref.Names.REFRESH_FORUM_ON_RESUME, currentContext.getString(R.string.settingsRefreshForumOnResume), false);
 
         addIntPref(IntPref.Names.PRIMARY_COLOR_OF_LIGHT_THEME, currentContext.getString(R.string.settingsPrimaryColorOfLightTheme), 0);
-        addIntPref(IntPref.Names.TOPIC_NAME_AND_LINK_COLOR_OF_LIGHT_THEME, currentContext.getString(R.string.settingsTopicNameAndLinkColorOfLightTheme), 0);
+        addIntPref(IntPref.Names.TOPIC_NAME_AND_ACCENT_COLOR_OF_LIGHT_THEME, currentContext.getString(R.string.settingsTopicNameAndAccentColorOfLightTheme), 0);
         addIntPref(IntPref.Names.ALT_COLOR_OF_LIGHT_THEME, currentContext.getString(R.string.settingsAltColorOfLightTheme), 0);
         addIntPref(IntPref.Names.SURVEY_COLOR_OF_LIGHT_THEME, currentContext.getString(R.string.settingsSurveyColorOfLightTheme), 0);
         addIntPref(IntPref.Names.DELETED_COLOR_OF_LIGHT_THEME, currentContext.getString(R.string.settingsDeletedColorOfLightTheme), 0);
@@ -304,7 +305,8 @@ public class PrefsManager {
             BACK_IS_OPEN_DRAWER,
             SAVE_LAST_ROW_USED_INSERTSTUFF,
             INVERT_TOOLBAR_TEXT_COLOR,
-            USE_LAST_MESSAGE_DRAFT_SAVED, USE_LAST_TOPIC_DRAFT_SAVED
+            USE_LAST_MESSAGE_DRAFT_SAVED, USE_LAST_TOPIC_DRAFT_SAVED,
+            REFRESH_FORUM_ON_RESUME
         }
     }
 
@@ -322,7 +324,7 @@ public class PrefsManager {
             CURRENT_TOPIC_MODE,
             FORUM_FAV_ARRAY_SIZE, TOPIC_FAV_ARRAY_SIZE,
             LAST_ROW_SELECTED_INSERTSTUFF,
-            PRIMARY_COLOR_OF_LIGHT_THEME, TOPIC_NAME_AND_LINK_COLOR_OF_LIGHT_THEME,
+            PRIMARY_COLOR_OF_LIGHT_THEME, TOPIC_NAME_AND_ACCENT_COLOR_OF_LIGHT_THEME,
             ALT_COLOR_OF_LIGHT_THEME, SURVEY_COLOR_OF_LIGHT_THEME, DELETED_COLOR_OF_LIGHT_THEME,
             NUMBER_OF_WEBVIEW_OPEN_SINCE_CACHE_CLEARED,
             SHORTCUT_VERSION_NUMBER
