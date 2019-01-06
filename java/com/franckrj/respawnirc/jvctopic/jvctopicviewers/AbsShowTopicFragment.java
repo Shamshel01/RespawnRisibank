@@ -34,6 +34,7 @@ public abstract class AbsShowTopicFragment extends AbsShowSomethingFragment {
 
     protected static final String SAVE_ALL_MESSAGES_SHOWED = "saveAllCurrentMessagesShowed";
     protected static final String SAVE_GO_TO_BOTTOM_PAGE_LOADING = "saveGoToBottomPageLoading";
+    protected static final String SAVE_ANCHOR_FOR_NEXT_LOAD = "saveAnchorForNextLoad";
     protected static final String SAVE_SETTINGS_PSEUDO_OF_AUTHOR = "saveSettingsPseudoOfAuthor";
     protected static final String SAVE_MESSAGES_ARE_FROM_IGNORED_PSEUDOS = "saveMessagesAreFromIgnoredPseudos";
 
@@ -182,17 +183,17 @@ public abstract class AbsShowTopicFragment extends AbsShowSomethingFragment {
         int miniNoelshackWidthInDP;
 
         try {
-            avatarSizeInDP = Integer.parseInt(PrefsManager.getString(PrefsManager.StringPref.Names.AVATAR_SIZE));
+            avatarSizeInDP = PrefsManager.getStringAsInt(PrefsManager.StringPref.Names.AVATAR_SIZE);
         } catch (Exception e) {
             avatarSizeInDP = -1;
         }
         try {
-            stickerSizeInDP = Integer.parseInt(PrefsManager.getString(PrefsManager.StringPref.Names.STICKER_SIZE));
+            stickerSizeInDP = PrefsManager.getStringAsInt(PrefsManager.StringPref.Names.STICKER_SIZE);
         } catch (Exception e) {
             stickerSizeInDP = -1;
         }
         try {
-            miniNoelshackWidthInDP = Integer.parseInt(PrefsManager.getString(PrefsManager.StringPref.Names.MINI_NOELSHACK_WIDTH));
+            miniNoelshackWidthInDP = PrefsManager.getStringAsInt(PrefsManager.StringPref.Names.MINI_NOELSHACK_WIDTH);
         } catch (Exception e) {
             miniNoelshackWidthInDP = -1;
         }
@@ -210,7 +211,7 @@ public abstract class AbsShowTopicFragment extends AbsShowSomethingFragment {
             adapterForTopic.setMiniNoeslahckSizeByWidth(Utils.roundToInt(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, miniNoelshackWidthInDP, getResources().getDisplayMetrics())));
         }
 
-        currentSettings.maxNumberOfOverlyQuotes = Integer.parseInt(PrefsManager.getString(PrefsManager.StringPref.Names.MAX_NUMBER_OF_OVERLY_QUOTE));
+        currentSettings.maxNumberOfOverlyQuotes = PrefsManager.getStringAsInt(PrefsManager.StringPref.Names.MAX_NUMBER_OF_OVERLY_QUOTE);
         currentSettings.transformStickerToSmiley = PrefsManager.getBool(PrefsManager.BoolPref.Names.TRANSFORM_STICKER_TO_SMILEY);
         currentSettings.shortenLongLink = PrefsManager.getBool(PrefsManager.BoolPref.Names.SHORTEN_LONG_LINK);
         currentSettings.hideUglyImages = PrefsManager.getBool(PrefsManager.BoolPref.Names.HIDE_UGLY_IMAGES);
@@ -223,9 +224,9 @@ public abstract class AbsShowTopicFragment extends AbsShowSomethingFragment {
         fastRefreshOfImages = PrefsManager.getBool(PrefsManager.BoolPref.Names.ENABLE_FAST_REFRESH_OF_IMAGES);
         adapterForTopic.setColorDeletedMessages(PrefsManager.getBool(PrefsManager.BoolPref.Names.ENABLE_COLOR_DELETED_MESSAGES));
         hideTotallyMessagesOfIgnoredPseudos = PrefsManager.getBool(PrefsManager.BoolPref.Names.HIDE_TOTALLY_MESSAGES_OF_IGNORED_PSEUDOS);
-        adapterForTopic.setMessageFontSizeInSp(Integer.parseInt(PrefsManager.getString(PrefsManager.StringPref.Names.MESSAGE_FONT_SIZE)));
-        adapterForTopic.setMessageInfosFontSizeInSp(Integer.parseInt(PrefsManager.getString(PrefsManager.StringPref.Names.MESSAGE_INFOS_FONT_SIZE)));
-        adapterForTopic.setMessageSignatureFontSizeInSp(Integer.parseInt(PrefsManager.getString(PrefsManager.StringPref.Names.MESSAGE_SIGNATURE_FONT_SIZE)));
+        adapterForTopic.setMessageFontSizeInSp(PrefsManager.getStringAsInt(PrefsManager.StringPref.Names.MESSAGE_FONT_SIZE));
+        adapterForTopic.setMessageInfosFontSizeInSp(PrefsManager.getStringAsInt(PrefsManager.StringPref.Names.MESSAGE_INFOS_FONT_SIZE));
+        adapterForTopic.setMessageSignatureFontSizeInSp(PrefsManager.getStringAsInt(PrefsManager.StringPref.Names.MESSAGE_SIGNATURE_FONT_SIZE));
         adapterForTopic.setQuoteBackgroundColor(ThemeManager.getColorInt(R.attr.themedQuoteBackgroundColor, requireActivity()));
         adapterForTopic.setQuoteStripeColor(ThemeManager.getColorInt(R.attr.themedQuoteStripeColor, requireActivity()));
         adapterForTopic.setQuoteStripeSize(requireActivity().getResources().getDimensionPixelSize(R.dimen.quoteStripeSize));
@@ -334,7 +335,10 @@ public abstract class AbsShowTopicFragment extends AbsShowSomethingFragment {
     }
 
     @Override
-    public void clearContent() {
+    public void clearContent(boolean deleteTemporaryInfos) {
+        if (deleteTemporaryInfos) {
+            clearTemporaryInfos();
+        }
         absGetterForTopic.stopAllCurrentTask();
         absGetterForTopic.resetDirectlyShowedInfos();
         adapterForTopic.disableSurvey();
@@ -401,6 +405,7 @@ public abstract class AbsShowTopicFragment extends AbsShowSomethingFragment {
         if (savedInstanceState != null) {
             ArrayList<JVCParser.MessageInfos> allCurrentMessagesShowed = savedInstanceState.getParcelableArrayList(SAVE_ALL_MESSAGES_SHOWED);
             goToBottomAtPageLoading = savedInstanceState.getBoolean(SAVE_GO_TO_BOTTOM_PAGE_LOADING, false);
+            anchorForNextLoad = savedInstanceState.getString(SAVE_ANCHOR_FOR_NEXT_LOAD, null);
             currentSettings.pseudoOfAuthor = savedInstanceState.getString(SAVE_SETTINGS_PSEUDO_OF_AUTHOR, "");
             allMessagesShowedAreFromIgnoredPseudos = savedInstanceState.getBoolean(SAVE_MESSAGES_ARE_FROM_IGNORED_PSEUDOS, false);
             absGetterForTopic.loadFromBundle(savedInstanceState);
@@ -455,6 +460,7 @@ public abstract class AbsShowTopicFragment extends AbsShowSomethingFragment {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(SAVE_ALL_MESSAGES_SHOWED, adapterForTopic.getAllItems());
         outState.putBoolean(SAVE_GO_TO_BOTTOM_PAGE_LOADING, goToBottomAtPageLoading);
+        outState.putString(SAVE_ANCHOR_FOR_NEXT_LOAD, anchorForNextLoad);
         outState.putString(SAVE_SETTINGS_PSEUDO_OF_AUTHOR, currentSettings.pseudoOfAuthor);
         outState.putBoolean(SAVE_MESSAGES_ARE_FROM_IGNORED_PSEUDOS, allMessagesShowedAreFromIgnoredPseudos);
         absGetterForTopic.saveToBundle(outState);

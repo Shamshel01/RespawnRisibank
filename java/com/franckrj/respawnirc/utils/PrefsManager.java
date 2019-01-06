@@ -35,6 +35,7 @@ public class PrefsManager {
         listOfStringPrefs.put(nameOfPref, new StringPref(prefStringValue, prefDefaultValue, newMinVal, newMaxVal));
     }
 
+    @SuppressWarnings("SameParameterValue")
     private static void addLongPref(LongPref.Names nameOfPref, String prefStringValue, long prefDefaultValue) {
         listOfLongPrefs.put(nameOfPref, new LongPref(prefStringValue, prefDefaultValue));
     }
@@ -176,6 +177,24 @@ public class PrefsManager {
             return currentPrefs.getString(prefInfo.stringName, prefInfo.defaultValue);
         } else {
             return "";
+        }
+    }
+
+    public static int getStringAsInt(StringPref.Names prefName) {
+        StringPref prefInfo = listOfStringPrefs.get(prefName);
+
+        if (prefInfo != null) {
+            try {
+                return Integer.parseInt(currentPrefs.getString(prefInfo.stringName, prefInfo.defaultValue));
+            } catch (Exception e) {
+                try {
+                    return Integer.parseInt(prefInfo.defaultValue);
+                } catch (Exception ee) {
+                    return 0;
+                }
+            }
+        } else {
+            return 0;
         }
     }
 
