@@ -39,6 +39,10 @@ public class Utils {
         return (int) (valToRound + 0.5);
     }
 
+    public static long roundToLong(double valToRound) {
+        return (long) (valToRound + 0.5);
+    }
+
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean stringsAreEquals(String str1, String str2) {
         return (str1 == null ? str2 == null : str1.equals(str2));
@@ -114,6 +118,8 @@ public class Utils {
     public static String imageLinkToFileName(String link) {
         if (link.startsWith("http://image.noelshack.com/minis/")) {
             return "img_nlsk_mini_" + link.substring(("http://image.noelshack.com/minis/").length()).replace("/", "_");
+        } else if (link.startsWith("http://image.noelshack.com/fichiers-xs/")) {
+            return "img_nlsk_xs_" + link.substring(("http://image.noelshack.com/fichiers-xs/").length()).replace("/", "_");
         } else if (link.startsWith("http://image.noelshack.com/fichiers/")) {
             return "img_nlsk_big_" + link.substring(("http://image.noelshack.com/fichiers/").length()).replace("/", "_");
         } else if (link.startsWith("http://image.jeuxvideo.com/avatar")) {
