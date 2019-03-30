@@ -20,6 +20,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.franckrj.respawnirc.base.AbsHomeIsBackActivity;
+import com.franckrj.respawnirc.utils.AccountManager;
 import com.franckrj.respawnirc.utils.PrefsManager;
 import com.franckrj.respawnirc.utils.Undeprecator;
 
@@ -54,10 +55,9 @@ public class ConnectActivity extends AbsHomeIsBackActivity {
                 }
 
                 if (connectCookieValue != null) {
-                    PrefsManager.putString(PrefsManager.StringPref.Names.COOKIES_LIST, "coniunctio=" + connectCookieValue);
-                    PrefsManager.putString(PrefsManager.StringPref.Names.PSEUDO_OF_USER, pseudoText.getText().toString().trim());
-                    PrefsManager.putBool(PrefsManager.BoolPref.Names.USER_IS_MODO, false);
-                    PrefsManager.applyChanges();
+                    String pseudo = pseudoText.getText().toString().trim();
+                    String cookie = "coniunctio=" + connectCookieValue;
+                    AccountManager.replaceCurrentAccountAndAddInReserve(new AccountManager.AccountInfos(pseudo, cookie, false), -1);
 
                     Toast.makeText(ConnectActivity.this, R.string.connectionSuccessful, Toast.LENGTH_SHORT).show();
 
