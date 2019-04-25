@@ -3,6 +3,7 @@ package com.franckrj.respawnirc.jvcforum;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.core.view.MenuItemCompat;
+import androidx.lifecycle.Lifecycle;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.widget.ShareActionProvider;
 
@@ -10,6 +11,8 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -52,6 +55,7 @@ public class SearchTopicInForumActivity extends AbsHomeIsBackActivity implements
     private String currentForumName = "";
     private int idOfTypeOfSearch = 0;
     private boolean launchSearchOnResumeAndResetPageNumber = false;
+    private boolean shouldOpenKeyboard = false;
 
     private final View.OnClickListener searchButtonClickedListener = new View.OnClickListener() {
         @Override
@@ -74,7 +78,9 @@ public class SearchTopicInForumActivity extends AbsHomeIsBackActivity implements
     private final RadioGroup.OnCheckedChangeListener searchTypeChangedListener = new RadioGroup.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
-            performSearch(false);
+            if (getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED)) {
+                performSearch(false);
+            }
         }
     };
 
@@ -174,6 +180,7 @@ public class SearchTopicInForumActivity extends AbsHomeIsBackActivity implements
                         baseSearchLink = "http://www.jeuxvideo.com/recherche/forums/" + newLinkForSearch.substring(newLinkForSearch.lastIndexOf("/") + 1);
                     }
                 }
+                shouldOpenKeyboard = true;
             }
 
             if (getIntent().getStringExtra(EXTRA_FORUM_NAME) != null) {
@@ -202,6 +209,14 @@ public class SearchTopicInForumActivity extends AbsHomeIsBackActivity implements
         super.onResume();
         PrefsManager.putInt(PrefsManager.IntPref.Names.LAST_ACTIVITY_VIEWED, MainActivity.ACTIVITY_SHOW_FORUM);
         PrefsManager.applyChanges();
+
+        if (shouldOpenKeyboard) {
+            Window currentWindow = getWindow();
+            if (currentWindow != null) {
+                currentWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            }
+            shouldOpenKeyboard = false;
+        }
     }
 
     @Override
@@ -220,6 +235,15 @@ public class SearchTopicInForumActivity extends AbsHomeIsBackActivity implements
             baseSearchLink = setShowedPageNumberForThisLink(baseSearchLink, 1);
             launchSearchOnResumeAndResetPageNumber = false;
         }
+    }
+
+    @Override
+    public void onPause() {
+        Window currentWindow = getWindow();
+        if (currentWindow != null) {
+            currentWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        }
+        super.onPause();
     }
 
     @Override
