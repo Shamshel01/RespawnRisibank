@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.franckrj.respawnirc.ConnectActivity;
 import com.franckrj.respawnirc.ConnectAsModoActivity;
+import com.franckrj.respawnirc.ManageAccountListActivity;
 import com.franckrj.respawnirc.NavigationMenuAdapter;
 import com.franckrj.respawnirc.NavigationMenuListView;
 import com.franckrj.respawnirc.R;
@@ -52,12 +53,15 @@ public abstract class AbsNavigationViewActivity extends AbsToolbarActivity imple
     protected static final int ITEM_ID_REFRESH_FORUM_FAV = 7;
     protected static final int ITEM_ID_TOPIC_FAV_SELECTED = 8;
     protected static final int ITEM_ID_REFRESH_TOPIC_FAV = 9;
-    protected static final int ITEM_ID_ACCOUNT_SELECTED = 10;
-    protected static final int ITEM_ID_CONNECT_AS_MODO = 11;
-    protected static final int ITEM_ID_CONNECT = 12;
+    protected static final int ITEM_ID_MANAGE_ACCOUNT = 10;
+    protected static final int ITEM_ID_ACCOUNT_SELECTED = 11;
+    protected static final int ITEM_ID_CONNECT_AS_MODO = 12;
+    protected static final int ITEM_ID_CONNECT = 13;
     protected static final int MODE_HOME = 0;
     protected static final int MODE_FORUM = 1;
     protected static final int MODE_CONNECT = 2;
+
+    protected static final String SAVE_MP_AND_NOTIF_IS_HIDDEN = "saveMpAndNotifIsHidden";
 
     protected static ArrayList<NavigationMenuAdapter.MenuItemInfo> listOfMenuItemInfoForHome = null;
     protected static ArrayList<NavigationMenuAdapter.MenuItemInfo> listOfMenuItemInfoForForum = null;
@@ -81,6 +85,7 @@ public abstract class AbsNavigationViewActivity extends AbsToolbarActivity imple
     protected ArrayList<NavigationMenuAdapter.MenuItemInfo> currentListOfMenuItem = null;
     protected boolean backIsOpenDrawer = false;
     protected boolean drawerIsDisabled = false;
+    protected boolean mpAndNotifNumberIsHidden = false;
 
     protected final AdapterView.OnItemClickListener itemInNavigationClickedListener = new AdapterView.OnItemClickListener() {
         @Override
@@ -131,6 +136,7 @@ public abstract class AbsNavigationViewActivity extends AbsToolbarActivity imple
                     updateAccountDependentInfos();
                     updatePseudoFromCurrentAccount();
                     updateAccountListInNavigationMenu(false);
+                    layoutForDrawer.closeDrawer(GravityCompat.START);
                 }
                 adapterForNavigationMenu.setRowSelected((int) id);
             } else {
@@ -283,11 +289,11 @@ public abstract class AbsNavigationViewActivity extends AbsToolbarActivity imple
                 NavigationMenuAdapter.MenuItemInfo tmpItemInfo = new NavigationMenuAdapter.MenuItemInfo();
                 tmpItemInfo.textContent = getString(R.string.accounts);
                 tmpItemInfo.iconResId = 0;
-                tmpItemInfo.buttonResId = 0;
+                tmpItemInfo.buttonResId = R.drawable.ictb_settings_dark;
                 tmpItemInfo.isHeader = true;
                 tmpItemInfo.isEnabled = true;
-                tmpItemInfo.itemId = -1;
-                tmpItemInfo.groupId = -1;
+                tmpItemInfo.itemId = ITEM_ID_MANAGE_ACCOUNT;
+                tmpItemInfo.groupId = GROUP_ID_BASIC;
                 listOfMenuItemInfoForConnect.add(tmpItemInfo);
             }
             {
@@ -318,8 +324,14 @@ public abstract class AbsNavigationViewActivity extends AbsToolbarActivity imple
     private void updatePseudoFromCurrentAccount() {
         if (!currentAccount.pseudo.isEmpty()) {
             pseudoTextNavigation.setText(currentAccount.pseudo);
+            if (!mpAndNotifNumberIsHidden) {
+                mpTextNavigation.setVisibility(View.VISIBLE);
+                notifTextNavigation.setVisibility(View.VISIBLE);
+            }
         } else {
             pseudoTextNavigation.setText(R.string.connectToJVC);
+            mpTextNavigation.setVisibility(View.GONE);
+            notifTextNavigation.setVisibility(View.GONE);
         }
 
         if (currentAccount.isModo && !currentAccount.pseudo.isEmpty()) {
@@ -462,6 +474,7 @@ public abstract class AbsNavigationViewActivity extends AbsToolbarActivity imple
     protected void hideMpAndNotifNumber() {
         mpTextNavigation.setVisibility(View.GONE);
         notifTextNavigation.setVisibility(View.GONE);
+        mpAndNotifNumberIsHidden = true;
     }
 
     protected void updateMpAndNotifNumberShowed(String newNumberOfMp, String newNumberOfNotif) {
@@ -500,6 +513,10 @@ public abstract class AbsNavigationViewActivity extends AbsToolbarActivity imple
         super.onCreate(savedInstanceState);
         initializeListsOfMenuItem();
         initializeViewAndToolbar();
+
+        if (savedInstanceState != null) {
+            mpAndNotifNumberIsHidden = savedInstanceState.getBoolean(SAVE_MP_AND_NOTIF_IS_HIDDEN, false);
+        }
 
         currentAccount = AccountManager.getCurrentAccount();
 
@@ -551,6 +568,9 @@ public abstract class AbsNavigationViewActivity extends AbsToolbarActivity imple
                         case ITEM_ID_TOPIC_FAV_SELECTED:
                             newForumOrTopicToRead(newFavSelected, false, true, newFavIsSelectedByLongClick);
                             newFavSelected = "";
+                            break;
+                        case ITEM_ID_MANAGE_ACCOUNT:
+                            startActivity(new Intent(AbsNavigationViewActivity.this, ManageAccountListActivity.class));
                             break;
                     }
                 }
@@ -606,6 +626,12 @@ public abstract class AbsNavigationViewActivity extends AbsToolbarActivity imple
             currentAccount = tmpAccount;
             updateNavigationMenu();
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(SAVE_MP_AND_NOTIF_IS_HIDDEN, mpAndNotifNumberIsHidden);
     }
 
     @Override
