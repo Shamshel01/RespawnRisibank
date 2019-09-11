@@ -4,10 +4,6 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,6 +12,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 
 import com.franckrj.respawnirc.DraftUtils;
 import com.franckrj.respawnirc.R;
@@ -344,11 +344,12 @@ public class SendTopicToForumActivity extends AbsHomeIsBackActivity implements I
                 }
             }
         }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
-    public void getStringInserted(String newStringToAdd, int posOfCenterFromEnd) {
-        Utils.insertStringInEditText(topicContentEdit, newStringToAdd, posOfCenterFromEnd);
+    public void insertThisString(@NonNull String stringToInsert, int posOfCenterOfString) {
+        Utils.insertStringInEditText(topicContentEdit, stringToInsert, posOfCenterOfString);
     }
 
     private static class SendTopicToJVC extends AbsWebRequestAsyncTask<SendTopicInfos, Void, String> {
@@ -385,7 +386,7 @@ public class SendTopicToForumActivity extends AbsHomeIsBackActivity implements I
                     pageContent = "respawnirc:resendneeded";
                 }
 
-                if (Utils.stringIsEmptyOrNull(pageContent)) {
+                if (Utils.stringIsEmptyOrNull(pageContent) || pageContent.contains("<meta http-equiv=\"refresh\"")) {
                     pageContent = "respawnirc:move:" + currentWebInfos.currentUrl;
                 }
 
