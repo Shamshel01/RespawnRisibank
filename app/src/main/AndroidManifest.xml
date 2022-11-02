@@ -126,5 +126,8 @@
             android:name=".WebBrowserActivity"
             android:label="@string/app_name"/>
 
+        <activity
+            android:name=".dialogs.Risibank"
+            android:label="Risibank"/>
     </application>
 </manifest>
