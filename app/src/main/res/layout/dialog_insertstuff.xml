@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -10,7 +11,6 @@
     </data>
 
     <RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".Risibank">
@@ -32,7 +32,7 @@
             android:layout_alignParentStart="true"
             android:layout_toStartOf="@+id/list_separator_insertstuff"
             android:scrollbars="vertical"
-            android:visibility="invisible" />
+            android:visibility="visible" />
 
         <View
             android:id="@+id/list_separator_insertstuff"
@@ -40,7 +40,7 @@
             android:layout_height="match_parent"
             android:layout_toStartOf="@+id/list_scrollview_insertstuff"
             android:background="?attr/themedDarkerPopupBackgroundColor"
-            android:visibility="invisible" />
+            android:visibility="visible" />
 
         <ScrollView
             android:id="@+id/list_scrollview_insertstuff"
@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:scrollbars="vertical"
-            android:visibility="invisible">
+            android:visibility="visible">
 
             <LinearLayout
                 android:layout_width="match_parent"

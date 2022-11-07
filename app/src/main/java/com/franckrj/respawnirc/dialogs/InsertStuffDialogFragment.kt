@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AlertDialog
@@ -18,12 +19,17 @@ import com.franckrj.respawnirc.R
 import com.franckrj.respawnirc.databinding.DialogInsertstuffBinding
 import com.franckrj.respawnirc.utils.PrefsManager
 import com.franckrj.respawnirc.utils.ThemeManager
-import kotlinx.android.synthetic.main.dialog_insertstuff.*
+import kotlinx.android.synthetic.main.dialog_insertstuff.view.*
+import kotlinx.android.synthetic.main.dialog_insertstuff.risibank_webview
 
 class InsertStuffDialogFragment : DialogFragment() {
     private val stuffAdapter = StuffInsertableAdapter(::stuffClicked)
     private val listOfCategoryButtons = mutableListOf<ImageView>()
     private var oldRowNumber: Int = 1
+    private var risibank : Risibank? = null
+
+    private val currentUrl = "https://www.google.fr/"
+
 
     private lateinit var bindings: DialogInsertstuffBinding
 
@@ -448,11 +454,15 @@ class InsertStuffDialogFragment : DialogFragment() {
         oldRowNumber = rowToUse
         PrefsManager.putInt(PrefsManager.IntPref.Names.LAST_ROW_SELECTED_INSERTSTUFF, oldRowNumber)
         PrefsManager.applyChanges()
+        if (rowToUse != 0) {
+            risibank?.getUnclicked()
+        } else {
+            risibank?.getClicked()
+        }
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(requireActivity())
-        val risibank:Risibank = Risibank()
         bindings = DialogInsertstuffBinding.inflate(requireActivity().layoutInflater)
         bindings.dialog = this
 
@@ -494,6 +504,8 @@ class InsertStuffDialogFragment : DialogFragment() {
         builder.setTitle(R.string.insertStuff).setView(bindings.root)
             .setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss() }
 
+        val webView  = bindings.risibankWebview
+        risibank = Risibank(webView)
         return builder.create()
     }
 
