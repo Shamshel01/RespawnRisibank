@@ -14,19 +14,15 @@
 
     <style id="compiled-css" type="text/css">
       .container {
-      width: 600px;
+      width: 100%;
       text-align: center;
   }
 
   #risibank-container {
       width: 100%;
-      height: 245px;
+      height: 100%;
   }
 
-  textarea {
-      width: 100%;
-      height: 80px;
-  }
 
 
       /* EOS */
@@ -43,8 +39,6 @@
     <!-- PlaceHolder for the integration -->
     <div id="risibank-container"><iframe src="https://risibank.fr/embed?id=3&amp;theme=light&amp;allowUsernameSelection=true&amp;showCopyButton=false&amp;mediaSize=sm&amp;navbarSize=sm&amp;defaultTab=top&amp;showNSFW=false" data-hash="[&quot;light&quot;,true,false,&quot;sm&quot;,&quot;sm&quot;,&quot;top&quot;,&quot;iframe&quot;]" style="width: 100%; height: 100%; border: none; overflow: hidden;"></iframe></div>
 
-    <!-- TextArea holding images -->
-    <textarea id="the-textarea"></textarea>
 </div>
 
 
@@ -146,7 +140,7 @@
        * You can also create your own callbacks, e.g.
        *  onSelect: ({ id, type, media }) => { console.log(media, 'selected'); }
        */
-      onSelectMedia: RisiBank.Actions.addRisiBankImageLink('#the-textarea'),
+      //onSelectMedia: RisiBank.Actions.addRisiBankImageLink('#the-textarea'),
   });
 
 

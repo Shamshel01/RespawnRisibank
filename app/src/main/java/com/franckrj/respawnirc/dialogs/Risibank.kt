@@ -1,6 +1,7 @@
 package com.franckrj.respawnirc.dialogs
 
 import android.view.View
+import android.webkit.WebChromeClient
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -14,17 +15,19 @@ class Risibank (var wv: WebView) {
     init {
         println("First initializer block that prints ")
 
-        risibankWebview.setWebViewClient(object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-                view.loadUrl(url)
-                return true
-            }
-        })
-        val webSettings: WebSettings = risibankWebview.getSettings()
+        risibankWebview.webViewClient = WebViewClient()
+        risibankWebview.isClickable = true
+        risibankWebview.webChromeClient = WebChromeClient()
+        val webSettings: WebSettings = risibankWebview.settings
         if (webSettings != null) {
             webSettings.javaScriptEnabled = true
         }
+        risibankWebview.isClickable = true;
         risibankWebview.loadUrl(dataHtml)
+
+        risibankWebview.isScrollbarFadingEnabled = true;
+
+
     }
 
 
