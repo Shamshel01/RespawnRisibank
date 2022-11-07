@@ -1,26 +1,30 @@
 package com.franckrj.respawnirc.dialogs
 
-import android.annotation.SuppressLint
-import android.util.Log
 import android.view.View
+import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import com.franckrj.respawnirc.R
 
 
 class Risibank (var wv: WebView) {
-    private val risibankWebview = wv
+    private var risibankWebview = wv
+    private var selectedMedia = null
+    private val dataHtml =  "file:///android_asset/RisibankWeb.html"
 
     init {
         println("First initializer block that prints ")
-        risibankWebview.loadUrl("http:\\www.google.com")
+
         risibankWebview.setWebViewClient(object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
                 view.loadUrl(url)
                 return true
             }
         })
-       // risibankWebview.visibility = View.INVISIBLE;
+        val webSettings: WebSettings = risibankWebview.getSettings()
+        if (webSettings != null) {
+            webSettings.javaScriptEnabled = true
+        }
+        risibankWebview.loadUrl(dataHtml)
     }
 
 
