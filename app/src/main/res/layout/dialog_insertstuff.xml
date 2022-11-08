@@ -15,16 +15,6 @@
         android:layout_height="match_parent"
         tools:context=".Risibank">
 
-        <WebView
-            android:id="@+id/risibank_webview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="62dp"
-            android:background="#2B1616"
-            android:backgroundTint="#000000"
-            android:visibility="visible" />
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/list_content_insertstuff"
             android:layout_width="match_parent"
@@ -220,6 +210,15 @@
             </LinearLayout>
 
         </ScrollView>
+
+        <WebView
+            android:id="@+id/risibank_webview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="62dp"
+            android:background="#2B1616"
+            android:backgroundTint="#000000"
+            android:visibility="visible" />
 
     </RelativeLayout>
 
