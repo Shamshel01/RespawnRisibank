@@ -1,12 +1,16 @@
 package com.franckrj.respawnirc.dialogs
 
+import android.annotation.SuppressLint
+import android.util.Log
 import android.view.View
 import android.webkit.WebChromeClient
+import android.webkit.JavascriptInterface
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 
 
+@SuppressLint("JavascriptInterface")
 class Risibank (var wv: WebView) {
     private var risibankWebview = wv
     private var selectedMedia = null
@@ -15,21 +19,28 @@ class Risibank (var wv: WebView) {
     init {
         println("First initializer block that prints ")
 
-        risibankWebview.webViewClient = WebViewClient()
-        risibankWebview.isClickable = true
-        risibankWebview.webChromeClient = WebChromeClient()
+
         val webSettings: WebSettings = risibankWebview.settings
         if (webSettings != null) {
             webSettings.javaScriptEnabled = true
         }
-        risibankWebview.isClickable = true;
+        risibankWebview.webViewClient = WebViewClient()
+        risibankWebview.addJavascriptInterface(JavascriptInterface(), "RisibankWeb");
         risibankWebview.loadUrl(dataHtml)
-
-        risibankWebview.isScrollbarFadingEnabled = true;
-
 
     }
 
+
+    private inner class JavascriptInterface
+    {
+        @android.webkit.JavascriptInterface
+        fun inputWebview(text: String?)
+        {
+            if (text != null) {
+                Log.d("WEBVIEW", text)
+            };
+        }
+    }
 
     fun getClicked() {
         risibankWebview.visibility = View.VISIBLE;

@@ -38,7 +38,7 @@
 
     <!-- PlaceHolder for the integration -->
     <div id="risibank-container"><iframe src="https://risibank.fr/embed?id=3&amp;theme=light&amp;allowUsernameSelection=true&amp;showCopyButton=false&amp;mediaSize=sm&amp;navbarSize=sm&amp;defaultTab=top&amp;showNSFW=false" data-hash="[&quot;light&quot;,true,false,&quot;sm&quot;,&quot;sm&quot;,&quot;top&quot;,&quot;iframe&quot;]" style="width: 100%; height: 100%; border: none; overflow: hidden;"></iframe></div>
-
+    <textarea id="the-textarea" hidden></textarea>
 </div>
 
 
@@ -56,7 +56,7 @@
        *  modal: Opens a small modal at the specified position
        * @type {undefined|'iframe'|'overlay'|'modal'}
        */
-      type: 'iframe',
+      type: 'modal',
 
       /**
        * MUST BE SET IF type == 'iframe'
@@ -140,7 +140,7 @@
        * You can also create your own callbacks, e.g.
        *  onSelect: ({ id, type, media }) => { console.log(media, 'selected'); }
        */
-      //onSelectMedia: RisiBank.Actions.addRisiBankImageLink('#the-textarea'),
+      onSelectMedia: ({ id, type, media }) => { RisibankWeb.inputWebview(media.source_url); }
   });
 
 
