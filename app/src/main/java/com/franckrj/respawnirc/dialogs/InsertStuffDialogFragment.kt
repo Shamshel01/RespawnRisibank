@@ -28,9 +28,6 @@ class InsertStuffDialogFragment : DialogFragment() {
     private var oldRowNumber: Int = 1
     private var risibank : Risibank? = null
 
-    private val currentUrl = "https://www.google.fr/"
-
-
     private lateinit var bindings: DialogInsertstuffBinding
 
     private fun stuffClicked(stuffPosition: Int, isLongClick: Boolean) {
