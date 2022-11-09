@@ -32,7 +32,9 @@
 
 <script type="text/javascript">//<![CDATA[
 
-
+function SetSelectedSticker(str) {
+    Android.setSticker(str);
+}
 
 RisiBank.activate({
 
@@ -128,7 +130,7 @@ RisiBank.activate({
      * You can also create your own callbacks, e.g.
      *  onSelect: ({ id, type, media }) => { console.log(media, 'selected'); }
      */
-    onSelectMedia: ({ id, type, media }) => { console.log(media.source_url); }
+    onSelectMedia: ({ id, type, media }) => { SetSelectedSticker(media.source_url); }
 });//]]></script>
 </body>
 </html>
