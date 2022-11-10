@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title></title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style id="compiled-css" type="text/css">
+
+    .container {
+    width: 100%;
+    text-align: center;
+}
+
+#risibank-container {
+    width: 100%;
+    height: 98vh;
+}
+  </style>
+
+    <script id="insert"></script>
+</head>
+<body>
+<script src="https://risibank.fr/downloads/web-api/risibank.js"></script>
+
+<div class="container">
+
+    <!-- PlaceHolder for the integration -->
+    <div id="risibank-container"></div>
+</div>
+
+
+<script type="text/javascript">//<![CDATA[
+
+function SetSelectedSticker(str) {
+    Android.setSticker(str);
+}
+
+RisiBank.activate({
+
+    /**
+     * Type of integration to use.
+     * Currently only the iframe is supported.
+     *  iframe: Embedded iframe (default)
+     *  overlay: Opens a full-page overlay
+     *  modal: Opens a small modal at the specified position
+     * @type {undefined|'iframe'|'overlay'|'modal'}
+     */
+    type: 'iframe',
+
+    /**
+     * MUST BE SET IF type == 'iframe'
+     * Query selector for the iframe container, or HTML Element being the iframe container.
+     * @type {undefined|string|HTMLElement}
+     */
+    container: '#risibank-container',
+
+    /**
+     * MUST BE SET IF type == 'modal'
+     * Position where to show the modal
+     * @type {undefined|{ x: number, y: number }}
+     */
+    openPosition: undefined,
+    
+    /**
+     * Theme to use for the embed
+     * @type {undefined|'light'|'dark'|'light-old'}
+     */
+    theme: 'light',
+    
+    /**
+     * Media size in the embed. Default is md.
+     * @type {'sm'|'md'|'lg'}
+     */
+    mediaSize: 'sm',
+    
+    /**
+     * Bottom navigation navbar size. Default is md.
+     * @type {'sm'|'md'|'lg'}
+     */
+    navbarSize: 'sm',
+    
+    /**
+     * Default tab to show. If chosing a non-existent tab, will show the most popular.
+     * @type {'search' | 'fav' | 'hot' | 'top' | 'new' | 'rand'}
+     */
+    defaultTab: 'top',
+    
+    /**
+     * Whether to show NSFW content. Default is to show it.
+     * @type {Boolean}
+     */
+    showNSFW: false,
+    
+    /**
+     * Whether to allow username selection in the embed.
+     * If set to yes
+     *  - Users will be able to select an username within the embed.
+     * 	- The selected username will be automatically storred by this object using the LocalStorage API.
+     * 	- The public collections of the selected user will be shown in the embed.
+     * If set to no, it will not be possible to select an user within the embed.
+     * @type {Boolean|undefined}
+     */
+    allowUsernameSelection: true,
+    
+    /**
+     * Whether to show a copy button below all medias
+     * When clicked, this copy button will call the given onCopyMedia
+     * @type {Boolean|undefined}
+     */
+    showCopyButton: false,
+
+    /**
+     * Callback when the copy button is shown (only used if showCopyButton is set to true)
+     */
+    onCopyMedia: ({ id, type, media }) => { console.log(media, 'copy'); },
+
+    /**
+     * Selection callback. When a media is selected, this callback is called.
+     * @required
+     * @type {({id: Number, type: String, media: Object}) => any}
+     * @param {Number} id Id of the integration (automatically generated, you probably do not need it)
+     * @param {String} type Event type. You probably do not need this either.
+     * @param {Object} media Media object.
+     * 
+     * Default callbacks are provided in the RisiBank object:
+     *  RisiBank.addSourceImageToTextArea(querySelector)    -> adds the selected source image (e.g. noelshack) to the textarea
+     *  RisiBank.addRisiBankImageToTextArea(querySelector)  -> adds the selected risibank image to the textarea
+     * 
+     * You can also create your own callbacks, e.g.
+     *  onSelect: ({ id, type, media }) => { console.log(media, 'selected'); }
+     */
+    onSelectMedia: ({ id, type, media }) => { SetSelectedSticker(media.source_url); }
+});//]]></script>
+</body>
+</html>

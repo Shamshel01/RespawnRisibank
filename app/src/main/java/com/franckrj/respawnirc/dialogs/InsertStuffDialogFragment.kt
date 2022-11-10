@@ -4,15 +4,18 @@ import android.app.Activity
 import android.app.Dialog
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.JavascriptInterface
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.franckrj.respawnirc.MainActivity
 import com.franckrj.respawnirc.R
 import com.franckrj.respawnirc.databinding.DialogInsertstuffBinding
 import com.franckrj.respawnirc.utils.PrefsManager
@@ -22,12 +25,12 @@ class InsertStuffDialogFragment : DialogFragment() {
     private val stuffAdapter = StuffInsertableAdapter(::stuffClicked)
     private val listOfCategoryButtons = mutableListOf<ImageView>()
     private var oldRowNumber: Int = 1
+    private var risibank : Risibank? = null
 
     private lateinit var bindings: DialogInsertstuffBinding
 
     private fun stuffClicked(stuffPosition: Int, isLongClick: Boolean) {
         val parentActivity: Activity = requireActivity()
-
         if (stuffPosition in stuffAdapter.listOfStuffId.indices) {
             if (parentActivity is StuffInserted) {
                 parentActivity.insertThisString(
@@ -42,9 +45,17 @@ class InsertStuffDialogFragment : DialogFragment() {
         }
     }
 
+    private fun StickerClicked() {
+        val parentActivity: Activity = requireActivity()
+        if (parentActivity is StuffInserted) {
+            risibank?.getSelectedMedia()?.let { parentActivity.insertThisString(it,-1) }
+        }
+        dismiss()
+    }
+
     private fun fillAdapterWithStuff(rowNum: Int) {
         stuffAdapter.listOfStuffId = when (rowNum) {
-            0 -> {
+            1 -> {
                 //smiley
                 listOf(
                     StuffInsertableAdapter.StuffInfos(R.drawable.smiley_1, ":)", -1),
@@ -131,7 +142,7 @@ class InsertStuffDialogFragment : DialogFragment() {
                     StuffInsertableAdapter.StuffInfos(R.drawable.smiley_siffle, ":siffle:", -1)
                 )
             }
-            1 -> {
+            2 -> {
                 //textformat
                 if (ThemeManager.currentThemeUseDarkColors()) {
                     listOf(
@@ -159,7 +170,7 @@ class InsertStuffDialogFragment : DialogFragment() {
                     )
                 }
             }
-            2 -> {
+            3 -> {
                 //ours
                 listOf(
                     StuffInsertableAdapter.StuffInfos(R.drawable.sticker_1f88, "[[sticker:p/1f88]]", -1),
@@ -182,7 +193,7 @@ class InsertStuffDialogFragment : DialogFragment() {
                     StuffInsertableAdapter.StuffInfos(R.drawable.sticker_zuc_es, "[[sticker:p/zuc-es]]", -1)
                 )
             }
-            3 -> {
+            4 -> {
                 //bourge
                 listOf(
                     StuffInsertableAdapter.StuffInfos(R.drawable.sticker_1jnc, "[[sticker:p/1jnc]]", -1),
@@ -195,7 +206,7 @@ class InsertStuffDialogFragment : DialogFragment() {
                     StuffInsertableAdapter.StuffInfos(R.drawable.sticker_1jnj, "[[sticker:p/1jnj]]", -1)
                 )
             }
-            4 -> {
+            5 -> {
                 //lama
                 listOf(
                     StuffInsertableAdapter.StuffInfos(R.drawable.sticker_1kgu, "[[sticker:p/1kgu]]", -1),
@@ -208,7 +219,7 @@ class InsertStuffDialogFragment : DialogFragment() {
                     StuffInsertableAdapter.StuffInfos(R.drawable.sticker_1kh1, "[[sticker:p/1kh1]]", -1)
                 )
             }
-            5 -> {
+            6 -> {
                 //hap
                 listOf(
                     StuffInsertableAdapter.StuffInfos(R.drawable.sticker_1kkg, "[[sticker:p/1kkg]]", -1),
@@ -221,7 +232,7 @@ class InsertStuffDialogFragment : DialogFragment() {
                     StuffInsertableAdapter.StuffInfos(R.drawable.sticker_1kkn, "[[sticker:p/1kkn]]", -1)
                 )
             }
-            6 -> {
+            7 -> {
                 //noel
                 listOf(
                     StuffInsertableAdapter.StuffInfos(R.drawable.sticker_1kko, "[[sticker:p/1kko]]", -1),
@@ -234,7 +245,7 @@ class InsertStuffDialogFragment : DialogFragment() {
                     StuffInsertableAdapter.StuffInfos(R.drawable.sticker_1kkv, "[[sticker:p/1kkv]]", -1)
                 )
             }
-            7 -> {
+            8 -> {
                 //chat
                 listOf(
                     StuffInsertableAdapter.StuffInfos(R.drawable.sticker_1kky, "[[sticker:p/1kky]]", -1),
@@ -253,7 +264,7 @@ class InsertStuffDialogFragment : DialogFragment() {
                     StuffInsertableAdapter.StuffInfos(R.drawable.sticker_1klb, "[[sticker:p/1klb]]", -1)
                 )
             }
-            8 -> {
+            9 -> {
                 //orc
                 listOf(
                     StuffInsertableAdapter.StuffInfos(R.drawable.sticker_1lga, "[[sticker:p/1lga]]", -1),
@@ -266,7 +277,7 @@ class InsertStuffDialogFragment : DialogFragment() {
                     StuffInsertableAdapter.StuffInfos(R.drawable.sticker_1lgh, "[[sticker:p/1lgh]]", -1)
                 )
             }
-            9 -> {
+            10 -> {
                 //dom
                 listOf(
                     StuffInsertableAdapter.StuffInfos(R.drawable.sticker_1ljj, "[[sticker:p/1ljj]]", -1),
@@ -284,7 +295,7 @@ class InsertStuffDialogFragment : DialogFragment() {
                     StuffInsertableAdapter.StuffInfos(R.drawable.sticker_1rzw, "[[sticker:p/1rzw]]", -1)
                 )
             }
-            10 -> {
+            11 -> {
                 //aventurier
                 listOf(
                     StuffInsertableAdapter.StuffInfos(R.drawable.sticker_1lm9, "[[sticker:p/1lm9]]", -1),
@@ -297,7 +308,7 @@ class InsertStuffDialogFragment : DialogFragment() {
                     StuffInsertableAdapter.StuffInfos(R.drawable.sticker_1lmg, "[[sticker:p/1lmg]]", -1)
                 )
             }
-            11 -> {
+            12 -> {
                 //saumon
                 listOf(
                     StuffInsertableAdapter.StuffInfos(R.drawable.sticker_1lmh, "[[sticker:p/1lmh]]", -1),
@@ -324,7 +335,7 @@ class InsertStuffDialogFragment : DialogFragment() {
                     StuffInsertableAdapter.StuffInfos(R.drawable.sticker_1nub, "[[sticker:p/1nub]]", -1)
                 )
             }
-            12 -> {
+            13 -> {
                 //bureau
                 listOf(
                     StuffInsertableAdapter.StuffInfos(R.drawable.sticker_1lt7, "[[sticker:p/1lt7]]", -1),
@@ -337,7 +348,7 @@ class InsertStuffDialogFragment : DialogFragment() {
                     StuffInsertableAdapter.StuffInfos(R.drawable.sticker_1lte, "[[sticker:p/1lte]]", -1)
                 )
             }
-            13 -> {
+            14 -> {
                 //foot
                 listOf(
                     StuffInsertableAdapter.StuffInfos(R.drawable.sticker_1n1m_de, "[[sticker:p/1n1m-de]]", -1),
@@ -371,7 +382,7 @@ class InsertStuffDialogFragment : DialogFragment() {
                     StuffInsertableAdapter.StuffInfos(R.drawable.sticker_1n1t_it, "[[sticker:p/1n1t-it]]", -1)
                 )
             }
-            14 -> {
+            15 -> {
                 //store
                 listOf(
                     StuffInsertableAdapter.StuffInfos(R.drawable.sticker_1n2c, "[[sticker:p/1n2c]]", -1),
@@ -387,7 +398,7 @@ class InsertStuffDialogFragment : DialogFragment() {
                     StuffInsertableAdapter.StuffInfos(R.drawable.sticker_1n2o, "[[sticker:p/1n2o]]", -1)
                 )
             }
-            15 -> {
+            16 -> {
                 //pixel
                 listOf(
                     StuffInsertableAdapter.StuffInfos(R.drawable.sticker_1o2k, "[[sticker:p/1o2k]]", -1),
@@ -400,7 +411,7 @@ class InsertStuffDialogFragment : DialogFragment() {
                     StuffInsertableAdapter.StuffInfos(R.drawable.sticker_1o67, "[[sticker:p/1o67]]", -1)
                 )
             }
-            16 -> {
+            17 -> {
                 //gym
                 listOf(
                     StuffInsertableAdapter.StuffInfos(R.drawable.sticker_1ptd, "[[sticker:p/1ptd]]", -1),
@@ -446,14 +457,19 @@ class InsertStuffDialogFragment : DialogFragment() {
         oldRowNumber = rowToUse
         PrefsManager.putInt(PrefsManager.IntPref.Names.LAST_ROW_SELECTED_INSERTSTUFF, oldRowNumber)
         PrefsManager.applyChanges()
+        if (rowToUse != 0) {
+            risibank?.getUnclicked()
+        } else {
+            risibank?.getClicked()
+        }
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(requireActivity())
-
         bindings = DialogInsertstuffBinding.inflate(requireActivity().layoutInflater)
         bindings.dialog = this
 
+        listOfCategoryButtons.add(bindings.risibankInsertstuff)
         listOfCategoryButtons.add(bindings.smileyButtonInsertstuff)
         listOfCategoryButtons.add(bindings.textformatButtonInsertstuff)
         listOfCategoryButtons.add(bindings.sticker1ButtonInsertstuff)
@@ -491,7 +507,16 @@ class InsertStuffDialogFragment : DialogFragment() {
         builder.setTitle(R.string.insertStuff).setView(bindings.root)
             .setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss() }
 
+        val webView  = bindings.risibankWebview
+        risibank = Risibank(webView)
+        webView.addJavascriptInterface(this, "Android")
         return builder.create()
+    }
+
+    @JavascriptInterface
+    fun setSticker(selectedSticker: String) {
+        risibank?.SetSelectedMedia(selectedSticker)
+        activity?.runOnUiThread( Runnable { StickerClicked() })
     }
 
     interface StuffInserted {
@@ -536,6 +561,5 @@ private class StuffInsertableAdapter(val clickCallback: (stuffPositionClicked: I
             (mainView as? ImageView)?.setImageResource(resId)
         }
     }
-
     class StuffInfos(@DrawableRes val imageId: Int, val imageString: String, val posOfCenterOfString: Int)
 }
