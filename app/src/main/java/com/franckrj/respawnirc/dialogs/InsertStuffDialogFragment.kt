@@ -15,11 +15,11 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.franckrj.respawnirc.MainActivity
 import com.franckrj.respawnirc.R
 import com.franckrj.respawnirc.databinding.DialogInsertstuffBinding
 import com.franckrj.respawnirc.utils.PrefsManager
 import com.franckrj.respawnirc.utils.ThemeManager
-import kotlin.properties.Delegates
 
 class InsertStuffDialogFragment : DialogFragment() {
     private val stuffAdapter = StuffInsertableAdapter(::stuffClicked)
@@ -45,12 +45,12 @@ class InsertStuffDialogFragment : DialogFragment() {
         }
     }
 
-    private fun stickerClicked() {
+    private fun StickerClicked() {
         val parentActivity: Activity = requireActivity()
         if (parentActivity is StuffInserted) {
             risibank?.getSelectedMedia()?.let { parentActivity.insertThisString(it,-1) }
-
         }
+        dismiss()
     }
 
     private fun fillAdapterWithStuff(rowNum: Int) {
@@ -516,7 +516,7 @@ class InsertStuffDialogFragment : DialogFragment() {
     @JavascriptInterface
     fun setSticker(selectedSticker: String) {
         risibank?.SetSelectedMedia(selectedSticker)
-        stickerClicked()
+        activity?.runOnUiThread( Runnable { StickerClicked() })
     }
 
     interface StuffInserted {
@@ -561,6 +561,5 @@ private class StuffInsertableAdapter(val clickCallback: (stuffPositionClicked: I
             (mainView as? ImageView)?.setImageResource(resId)
         }
     }
-
     class StuffInfos(@DrawableRes val imageId: Int, val imageString: String, val posOfCenterOfString: Int)
 }

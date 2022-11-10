@@ -14,7 +14,6 @@ class  Risibank (var wv: WebView ) {
     private var risibankWebview = wv
     private var selectedMedia: String? = null
     private val dataHtml = "file:///android_asset/RisibankWeb.html"
-    //private val dataHtml =  "https://risibank.fr/"
 
     init {
         val webSettings: WebSettings = risibankWebview.settings
@@ -26,7 +25,6 @@ class  Risibank (var wv: WebView ) {
         risibankWebview.loadUrl(dataHtml)
         risibankWebview.isScrollbarFadingEnabled = true;
     }
-
 
     fun getSelectedMedia(): String? {
         return selectedMedia
