@@ -8,22 +8,17 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import android.webkit.JavascriptInterface
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.franckrj.respawnirc.R
 import com.franckrj.respawnirc.databinding.DialogInsertstuffBinding
 import com.franckrj.respawnirc.utils.PrefsManager
 import com.franckrj.respawnirc.utils.ThemeManager
-import com.google.android.material.chip.ChipDrawable.Delegate
-import kotlinx.android.synthetic.main.dialog_insertstuff.view.*
-import kotlinx.android.synthetic.main.dialog_insertstuff.risibank_webview
 import kotlin.properties.Delegates
 
 class InsertStuffDialogFragment : DialogFragment() {
@@ -42,13 +37,19 @@ class InsertStuffDialogFragment : DialogFragment() {
                     stuffAdapter.listOfStuffId[stuffPosition].imageString,
                     stuffAdapter.listOfStuffId[stuffPosition].posOfCenterOfString
                 )
-                Log.i("TEST2", stuffAdapter.listOfStuffId[stuffPosition].posOfCenterOfString.toString())
-
             }
         }
 
         if (!isLongClick) {
             dismiss()
+        }
+    }
+
+    private fun stickerClicked() {
+        val parentActivity: Activity = requireActivity()
+        if (parentActivity is StuffInserted) {
+            risibank?.getSelectedMedia()?.let { parentActivity.insertThisString(it,-1) }
+
         }
     }
 
@@ -508,8 +509,14 @@ class InsertStuffDialogFragment : DialogFragment() {
 
         val webView  = bindings.risibankWebview
         risibank = Risibank(webView)
-        //risibank!!.selectedMedia by Delegates.observable("0")
+        webView.addJavascriptInterface(this, "Android")
         return builder.create()
+    }
+
+    @JavascriptInterface
+    fun setSticker(selectedSticker: String) {
+        risibank?.SetSelectedMedia(selectedSticker)
+        stickerClicked()
     }
 
     interface StuffInserted {
