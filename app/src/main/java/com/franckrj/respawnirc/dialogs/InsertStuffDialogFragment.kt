@@ -3,14 +3,17 @@ package com.franckrj.respawnirc.dialogs
 import android.app.Activity
 import android.app.Dialog
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.JavascriptInterface
+import android.widget.EditText
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
@@ -20,12 +23,14 @@ import com.franckrj.respawnirc.R
 import com.franckrj.respawnirc.databinding.DialogInsertstuffBinding
 import com.franckrj.respawnirc.utils.PrefsManager
 import com.franckrj.respawnirc.utils.ThemeManager
+import kotlinx.android.synthetic.main.dialog_insertstuff.*
 
 class InsertStuffDialogFragment : DialogFragment() {
     private val stuffAdapter = StuffInsertableAdapter(::stuffClicked)
     private val listOfCategoryButtons = mutableListOf<ImageView>()
     private var oldRowNumber: Int = 1
     private var risibank : Risibank? = null
+    private var edit : EditText? = null
 
     private lateinit var bindings: DialogInsertstuffBinding
 
@@ -464,6 +469,7 @@ class InsertStuffDialogFragment : DialogFragment() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(requireActivity())
         bindings = DialogInsertstuffBinding.inflate(requireActivity().layoutInflater)
@@ -510,6 +516,9 @@ class InsertStuffDialogFragment : DialogFragment() {
         val webView  = bindings.risibankWebview
         risibank = Risibank(webView)
         webView.addJavascriptInterface(this, "Android")
+        edit= bindings.edit
+        edit!!.isFocusable = true;
+        edit!!.requestFocus();
         return builder.create()
     }
 
