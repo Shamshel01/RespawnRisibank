@@ -10,20 +10,11 @@ import android.webkit.WebViewClient
 
 
 @SuppressLint("JavascriptInterface")
-class  Risibank (var wv: WebView ) {
-    private var risibankWebview = wv
+class  Risibank () {
     private var selectedMedia: String? = null
-    private val dataHtml = "file:///android_asset/RisibankWeb.html"
 
     init {
-        val webSettings: WebSettings = risibankWebview.settings
-        if (webSettings != null) {
-            webSettings.javaScriptEnabled = true
-            webSettings.domStorageEnabled = true;
-        }
-        risibankWebview.webViewClient = WebViewClient()
-        risibankWebview.loadUrl(dataHtml)
-        risibankWebview.isScrollbarFadingEnabled = true;
+
     }
 
     fun getSelectedMedia(): String? {
@@ -34,10 +25,10 @@ class  Risibank (var wv: WebView ) {
     }
 
     fun getClicked() {
-        risibankWebview.visibility = View.VISIBLE;
+
     }
 
     fun getUnclicked() {
-        risibankWebview.visibility = View.GONE;
+
     }
 }

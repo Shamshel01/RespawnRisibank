@@ -51,10 +51,10 @@ class InsertStuffDialogFragment : DialogFragment() {
     }
 
     private fun StickerClicked() {
-        val parentActivity: Activity = requireActivity()
+        /*val parentActivity: Activity = requireActivity()
         if (parentActivity is StuffInserted) {
             risibank?.getSelectedMedia()?.let { parentActivity.insertThisString(it,-1) }
-        }
+        }*/
         dismiss()
     }
 
@@ -513,9 +513,7 @@ class InsertStuffDialogFragment : DialogFragment() {
         builder.setTitle(R.string.insertStuff).setView(bindings.root)
             .setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss() }
 
-        val webView  = bindings.risibankWebview
-        risibank = Risibank(webView)
-        webView.addJavascriptInterface(this, "Android")
+        risibank = Risibank()
         edit= bindings.edit
         edit!!.isFocusable = true;
         edit!!.requestFocus();
